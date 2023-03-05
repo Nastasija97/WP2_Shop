@@ -1,0 +1,92 @@
+[
+    {
+        "id":1,
+        "name":"Men Zara Shoes",
+        "isOnSale":false,
+        "price":{
+            "current":54,
+            "old":66
+        },
+        "picture":{
+            "src":"img/product/product-1.jpg",
+            "alt":"picture"
+        },
+        "stars":4, //number of stars
+        "category":1,
+        "sizes":[1,2,3,4,5],
+        "tags":[1,5],
+        "brand":4
+    },
+    {
+        "id":1,
+        "name":"Men Zara Shoes",
+        "isOnSale":false,
+        "price":{
+            "current":54,
+            "old":66
+        },
+        "picture":{
+            "src":"img/product/product-1.jpg",
+            "alt":"picture"
+        },
+        "stars":4, //number of stars
+        "category":1,
+        "sizes":[1,2,3,4,5],
+        "tags":[1,5],
+        "brand":4
+    },
+    {
+        "id":2,
+        "name":"Piqué Biker Jacket",
+        "isOnSale":true,
+        "price":{
+            "current":54,
+            "old":66
+        },
+        "picture":{
+            "src":"img/product/product-1.jpg",
+            "alt":"picture"
+        },
+        "stars":4, //number of stars
+        "category":1,
+        "sizes":[1,2,3,4,5],
+        "tags":[1,5],
+        "brand":4
+    },
+    {
+        "id":1,
+        "name":"Men Zara Shoes",
+        "isOnSale":false,
+        "price":{
+            "current":54,
+            "old":66
+        },
+        "picture":{
+            "src":"img/product/product-1.jpg",
+            "alt":"picture"
+        },
+        "stars":4, //number of stars
+        "category":1,
+        "sizes":[1,2,3,4,5],
+        "tags":[1,5],
+        "brand":4
+    },
+    {
+        "id":1,
+        "name":"Men Zara Shoes",
+        "isOnSale":false,
+        "price":{
+            "current":54,
+            "old":66
+        },
+        "picture":{
+            "src":"img/product/product-1.jpg",
+            "alt":"picture"
+        },
+        "stars":4, //number of stars
+        "category":1,
+        "sizes":[1,2,3,4,5],
+        "tags":[1,5],
+        "brand":4
+    },
+]

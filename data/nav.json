@@ -1,0 +1,19 @@
+[
+{
+    "name":"Home",
+    "path":"./index.html"
+},
+{
+    "name":"Shop",
+    "path":"./shop.html"
+},
+{
+    "name":"About us",
+    "path":"./about.html"
+},
+{
+    "name":"Shopping cart",
+    "path":"./shopping-cart.html"
+}
+
+]
