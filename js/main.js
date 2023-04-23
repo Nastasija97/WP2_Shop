@@ -6,9 +6,9 @@
         Preloader
     --------------------*/
     $(window).on('load', function () {
-       
 
-     //preloader 
+
+        //preloader 
 
         /*------------------
             Gallery filter
@@ -43,8 +43,8 @@
     });
 
     /*------------------
-		Navigation
-	--------------------*/
+        Navigation
+    --------------------*/
     $(".mobile-menu").slicknav({
         prependTo: '#mobile-menu-wrap',
         allowParentLinks: true
@@ -95,16 +95,16 @@
     $("select").niceSelect();
 
     /*-------------------
-		Radio Btn
-	--------------------- */
+        Radio Btn
+    --------------------- */
     $(".product__color__select label, .shop__sidebar__size label, .product__details__option__size label").on('click', function () {
         $(".product__color__select label, .shop__sidebar__size label, .product__details__option__size label").removeClass('active');
         $(this).addClass('active');
     });
 
     /*-------------------
-		Scroll
-	--------------------- */
+        Scroll
+    --------------------- */
     $(".nice-scroll").niceScroll({
         cursorcolor: "#0d0d0d",
         cursorwidth: "15px",
@@ -114,238 +114,652 @@
         horizrailenabled: false
     });
 
-  
+
 
     /*------------------
-		Magnific
-	--------------------*/
+        Magnific
+    --------------------*/
     $('.video-popup').magnificPopup({
         type: 'iframe'
     });
 
     /*-------------------
-		Quantity change
-	--------------------- */
+        Quantity change
+    --------------------- */
 
 
 
- 
+
 
 })(jQuery);
 
 //data
 
-let url = window.location.pathname;
-var nav=[];
-var allProducts=[];
-var categories=[];
-var brands=[];
-var sizes=[];
-var tags=[];
-window.onload=function(){
-    ajaxCallback("nav",displayNav);
-    ajaxCallback("categories",displayCategories);
-    ajaxCallback("brands",displayBrands);
-    ajaxCallback("sizes",displaySizes);
-    ajaxCallback("tags",displayTags);
-    ajaxCallback("products",getAllProducts);
-    displayHeader();
-    displayFooter();
+
+
+
+var nav = [];
+
+var categories = [];
+var brands = [];
+var sizes = [];
+var tags = [];
+var menu = [];
+var allProducts = [];
+
+
+var categories = [];
+var url = window.location.href;
+//console.log(url);
+//function for fetching data from json
+function fetchData(file, callback) {
+    fetch("data/" + file)
+        .then(response => response.json())
+        .then(data => callback(data))
+        .catch(err => console.log(err));
+}
+function getAllProducts(data) {
+    data.forEach(el => {
+        allProducts.push(el);
+        //console.log(el);
+    });
+    // console.log(allProducts);
+    setItemToLS("allProducts", allProducts);
+}
+//local storage functions
+function setItemToLS(name, data) {
+    localStorage.setItem(name, JSON.stringify(data));
+}
+function getItemFromLS(name) {
+    return JSON.parse(localStorage.getItem(name));
+}
+function removeItemFromLS(name) {
+    return localStorage.removeItem(name);
 }
 
 
-
-
-
-//js
-
-//fetching data from json////////////////////////////////////////////////////////
-
-function ajaxCallback(file,callback){
-   $.ajax({
-    url:"/data/"+file+".json",
-    method:"get",
-    dataType:"json",
-    success:function(result){callback(result)},
-    error:function(error){
-        console.log(error);
+//checking for any products in cart
+function anyInCart() {
+    return getItemFromLS("products");
+}
+//function for validating single input
+function validateInput(regEx, element, err, errMess) {
+    if (!$(element).val().match(regEx)) {
+        $(element).addClass("error");
+        $(err).html(errMess);
+        return false;
     }
-   })
-}
-function getAllProducts(data){
-    data.forEach(el=>{
-        allProducts.push(el);s
-       // console.log(el);
-    });
-    
-    setItemToLS("allProducts",allProducts);
-   
-}
-
-//LOCAL STORAGE////////////////////////////////////////////////////////////////////
-function getItemFromLS(name){
-    let item= localStorage.getItem(name);
-
-    if(item){
-        parsedItem=JSON.parse(item);
-        if(parsedItem.length>0){
-            return parsedItem;
-        }
+    else {
+        $(element).removeClass("error");
+        $(element).addClass("ok");
+        $(err).html("");
+        return true;
     }
-    return false;
 }
-function setItemToLS(name,data){
-    localStorage.setItem(name,JSON.stringify(data));
-}
-function removeFromLS(name){
-    localStorage.removeItem(name);
-}
+//regex
+var reName = /^[A-ZČĆŠĐŽ][a-zčćšđž]{2,19}(\s[A-ZČĆŠĐŽ][a-zčćšđž]{2,19})*$/;
+var reEmail = /^[\w\.\-]+\@([a-z0-9]+\.)+[a-z]{2,3}$/;
+var reSubject = /^([1-zćčžđšA-ZČĆŠĐŽ0-1@.\s]{2,20})$/;
+var reAddress = /^([A-ZČĆŠĐŽ]|[1-9]{1,5})[A-ZČĆŠĐŽa-zčćšđž\d\-\.\s]+$/;
+var reMessage = /^([1-zćčžđšA-ZČĆŠĐŽ0-1@.\s]{2,255})$/;
+var reAddress = /^([A-ZČĆŠĐŽ]|[1-9]{1,5})[A-ZČĆŠĐŽa-zčćšđž\d\-\.\s]+$/;
+var reCreditCard = /^[0-9]{16}$/;
+var messName = "Name must begin with capital letter";
+var messEmail = "Email must contain @ sign";
+var messSubject = "Subject can contain 20 characters";
+var messMessage = "Message can contain 255 characters";
+var messAddress = "Please eneter your address";
+var messCreditCard = "Credit card contains 16 digits";
 
-//DYNAMIC DISPLAY////////////////////////////////////////////////////////////////////
 
-function displayNav(data){
-    let h="<ul>";
-    data.forEach(element => {
-        h+=`     <li class="filter__controls" ><a href="${element.path}">${element.name}</a></li>
-        `;
-
-        nav.push(element);
-    });
-    h+="</ul>"
-    $("#nav").html(h);
-    
-}
-function displayHeader(){
-    let html=`   <div class="header__top">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-6 col-md-7">
-                <div class="header__top__left">
-                    <p>Free shipping, 30-day return or refund guarantee.</p>
-                </div>
-            </div>
-         
-        </div>
-    </div>
-</div>
-<div class="container">
-    <div class="row">
-        <div class="col-lg-3 col-md-3">
-            <div class="header__logo">
-                <a href="./index.html"><img src="img/logo.png" alt=""></a>
-            </div>
-        </div>
-        <div class="col-lg-6 col-md-6">
-            <nav class="header__menu mobile-menu" id="nav">
-            </nav>
-        </div>
-        <div class="col-lg-3 col-md-3">
-            <div class="header__nav__option ">
-                <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
-                <a href="#"><img src="img/icon/heart.png" alt=""></a>
-                <a href="./shopping-cart.html"><img src="img/icon/cart.png" alt=""> <span><strong>3</strong></span></a>
-                <div class="price">$0.00</div>
-            </div>
-        </div>
-    </div>
-    <div class="canvas__open"><i class="fa fa-bars"></i></div>
-</div>`;
-    $('.header').html(html);
-}
-function displayFooter(){
-   let html=`   <div class="container">
-    <div class="row">
-        <div class="col-lg-3 col-md-6 col-sm-6">
-            <div class="footer__about">
-                <div class="footer__logo">
-                    <a href="#"><img src="img/footer-logo.png" alt=""></a>
-                </div>
-                <p>The customer is at the heart of our unique business model, which includes design.</p>
-                <a href="#"><img src="img/payment.png" alt=""></a>
-            </div>
-        </div>
-        <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
-            <div class="footer__widget">
-                <h6>Shopping</h6>
-                <ul>
-                    <li><a href="#">Clothing Store</a></li>
-                    <li><a href="#">Trending Shoes</a></li>
-                    <li><a href="#">Accessories</a></li>
-                    <li><a href="#">Sale</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="col-lg-2 col-md-3 col-sm-6">
-            <div class="footer__widget">
-                <h6>Shopping</h6>
-                <ul>
-                    <li><a href="#">Author</a></li>
-                    <li><a href="/js/main.js">js</a></li>
-                    <li><a href="#">Docs</a></li>
-                    <li><a href="#">Sitemap</a></li>
-                   
-                </ul>
-            </div>
-        </div>
-        <div class="col-lg-3 offset-lg-1 col-md-6 col-sm-6">
-        
-        </div>
-    </div>
-   
-</div>`;
-$('.footer').html(html);
-}
-function displayCategories(data){
-   let html=`<ul class="nice-scroll">`;
-data.forEach(e=>{
-    html+=`<li><a href="#">${e.name} (20)</a></li>`;
-    categories.push(e);
-});
-html+="</ul>";
-$("#categories").html(html);
-}
-function displayBrands(data){
-   let html=`<ul class="nice-scroll">`;
-data.forEach(e=>{
-    html+=` <li><a href="#">${e.name}</a></li>`;
-brands.push(e);
-});
-html+="</ul>";
-$("#brands").html(html);
-}
-function displaySizes(data){
-    let html=`<div class="shop__sidebar__size" id="sizes">`;
-    data.forEach(e=>{
-        html+=`<label for="${e.name}">${e.name}
-        <input type="radio" id="${e.name}">
-    </label>`;
-    sizes.push(e);
-    });
-    html+=`</div>`;
-    $('#sizes').html(html);
-}
-function displayTags(data){
-    let html=` <div class="shop__sidebar__tags">`;
-    data.forEach(e=>{
-        html+=` 
-        <a href="#">${e.name}</a>
+window.onload = function () {
+    try {
+        displayHeader;
+        fetchData("nav.json", displayNav);
+        fetchData("products.json", getAllProducts);
       
+    }
+    catch (e) {
+        $(".error").html(e.message());
+    }
+   
+    //console.log(allProducts);
+    if (url == "http://localhost/WP2_SHOP/index.html"){
+            try {
+                fetchData("products.json", displayTopProducts);
+            }
+            catch (e) {
+                $(".error").html(e.message());
+            }
+            function displayTopProducts(data) {
+                let html = "";
+                data.forEach(el => {
+                    if (el.top) {
+                        html += `<div class="card d-flex align-items-center col-md-3">
+        <img class="card-img-top" src="assets/img/${el.image.src}" alt="${el.image.alt}">
+        <div class="card-body">
+        <h6 class="card-title fw-bold">
+        ${el.name}
+        </h6>
+        <p class="card-text text-center fw-bold">$${el.price.new}</p>
+        </div>
+        <a href="shop.html"><button type="button" class="btn btn-primary btn-sm">Go
+        Shop</button></a>
+        </div>`;
+                            }
+                });
+                $("#topProducts").html(html);
+            }
+        }
+        if (url == "http://localhost/WP2_SHOP/about.html") 
+            {
+          
+        }
+        if (url == "http://127.0.0.1:5501/shop.html") {
+            
+            try {
+                fetchData("categories.json", displayCategories);
+                fetchData("brands.json", displayBrands);
+                fetchData("products.json", displayProducts);
+                fetchData("sizes.json", displaySizes);
+                fetchData("tags.json", displayTags);
+                
+            }
+            catch (e) {
+                $(".error").html(e.message);
+            }
+         //   $("#sort").change(filterChange);
+           // $("#search").keyup(filterChange);
+            function filterChange() {
+                fetchData("products.json", displayProducts);
+            }
+         }
+    
+            //display functions
+                        
+            function displayNav(data) {
+                let h = "<ul>";
+                data.forEach(element => {
+                    h += `     <li class="filter__controls" ><a href="${element.path}">${element.name}</a></li>
+                    `;
+
+                    nav.push(element);
+                });
+                h += "</ul>"
+                $("#nav").html(h);
+
+            }
+          
+            
+
+
+            function displayBrands(data) {
+                let html = `<ul class="nice-scroll">`;
+                data.forEach(e => {
+                    html += ` <li><a href="#">${e.name}</a></li>`;
+                    brands.push(e);
+                });
+                html += "</ul>";
+                $("#brands").html(html);
+            }
+            function displaySizes(data) {
+                let html = `<div class="shop__sidebar__size" id="sizes">`;
+                data.forEach(e => {
+                    html += `<label for="${e.name}">${e.name}
+                    <input type="radio" id="${e.name}">
+                </label>`;
+                    sizes.push(e);
+                });
+                html += `</div>`;
+                $('#sizes').html(html);
+                            }
+                //static function display
+                function displayHeader() {
+                    let html = `   <div class="header__top">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-7">
+                                <div class="header__top__left">
+                                    <p>Free shipping, 30-day return or refund guarantee.</p>
+                                </div>
+                            </div>
+                        
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3">
+                            <div class="header__logo">
+                                <a href="./index.html"><img src="img/logo.png" alt=""></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <nav class="header__menu mobile-menu" id="nav">
+                            </nav>
+                        </div>
+                        <div class="col-lg-3 col-md-3">
+                            <div class="header__nav__option ">
+                                <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
+                                <a href="#"><img src="img/icon/heart.png" alt=""></a>
+                                <a href="./shopping-cart.html"><img src="img/icon/cart.png" alt=""> <span><strong>3</strong></span></a>
+                                <div class="price">$0.00</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="canvas__open"><i class="fa fa-bars"></i></div>
+                </div>`;
+                    $('#header').html(html);
+                }
+            function displayFooter() {
+                let html = `   <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="footer__about">
+                            <div class="footer__logo">
+                                <a href="#"><img src="img/footer-logo.png" alt=""></a>
+                            </div>
+                            <p>The customer is at the heart of our unique business model, which includes design.</p>
+                            <a href="#"><img src="img/payment.png" alt=""></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
+                        <div class="footer__widget">
+                            <h6>Shopping</h6>
+                            <ul>
+                                <li><a href="#">Clothing Store</a></li>
+                                <li><a href="#">Trending Shoes</a></li>
+                                <li><a href="#">Accessories</a></li>
+                                <li><a href="#">Sale</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-6">
+                        <div class="footer__widget">
+                            <h6>Shopping</h6>
+                            <ul>
+                                <li><a href="#">Author</a></li>
+                                <li><a href="/js/main.js">js</a></li>
+                                <li><a href="#">Docs</a></li>
+                                <li><a href="#">Sitemap</a></li>
+                               
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 offset-lg-1 col-md-6 col-sm-6">
+                    
+                    </div>
+                </div>
+               
+            </div>`;
+                $('#footer').html(html);
+         }
+            function displayTags(data) {
+                let html = ` <div class="shop__sidebar__tags">`;
+                data.forEach(e => {
+                    html += ` 
+                    <a href="#">${e.name}</a>
+                  
+                    
+                `;
+                    tags.push(e);
+                  
+                  });
+               // console.log(tags);
+                html += `</div>`;
+                $('#tags').html(html);
+            }
+            function displayCategories(data) {
+                let html = `<ul class="nice-scroll">`;
+                data.forEach(el => {
+                    html += `<li class="list-group-item">
+            <input type="checkbox" value="${el.id}" class="category"
+            name="categories"/> ${el.name}
+            </li>`;
+                    categories.push(el);
+                });
+                $("#categories").html(html);
+             //   $('.category').change(filterChange);
+            }
+
+            function displayProducts(data) {
+                data = filterByCategory(data);
+                
+               // data = sorting(data);
+              //  data = search(data);
+                let html = "";
+                if (data.length == 0) {
+                    html += `<p class="alert alert-danger">There is no products for selected category</p>`;
+                }
+                else {
+                    data.forEach(el => {
+                        html += ` <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix hot-sales">
+                        <div class="product__item sale">
+                            <div class="product__item__pic set-bg" data-setbg="${el.picture.src}">
+                            ${el.isOnSale? '<span class="label">Sale</span>':""}
+                                <ul class="product__hover">
+                                    <li><a href="#"><img src="img/icon/heart.png" alt="add to favs"></a></li>
+                                    <li><a href="#"><img src="img/icon/compare.png" alt="compare"> <span>Compare</span></a></li>
+                                    <li><a href="#"><img src="img/icon/search.png" alt="search"></a></li>
+                                </ul>
+                            </div>
+                            <div class="product__item__text">
+                                <h6>${el.name}</h6>
+                                <a href="#" class="add-cart"> <button type="button" class="btn btn-info btnCart" data-id="${el.id}"
+                                data-bs-toggle="modal" data-bs-target="#cartModal"  style="position: relative; top: -40px;">Add to cart</button></a>
+                                <div class="rating">
+                                  ${stars(el.stars)}
+                                </div>
+                                <h5>$${el.price.current}</h5>
+                             ${isSale(el.price.old)}
+                           
+                            </div>
+                        </div>
+                    </div>   `
+                    });
+                }
+                $("#products").html(html);
+                $(".btnCart").on("click", addToCart);
+            }
+          function isSale(data){
+            let html="";
+            if(data){
+                html+=`<del>${data}</del> 
+                `;
+            $('.product__item__pic').html(`<span class="label">Sale</span>`);    
+               
+
+            }
+            
+            return html;
+          }
+           
+          
+      
+
+
+            function stars(data) {
+                let html = "";
+                for (let i = 0; i < data; i++) {
+                    html += `<i class="fa fa-star"></i>`;
+                }
+                for (let i = 0; i < 5 - data; i++) {
+                    html += `<i class="fa fa-star-o"></i>`;
+                }
+                return html;
+            }
+            function filterByCategory(data) {
+                let selectedCategories = [];
+                $('.category:checked').each(function (el) {
+                    selectedCategories.push(parseInt($(this).val()));
+                });
+                if (selectedCategories.length != 0) {
+                    return data.filter(x => selectedCategories.includes(x.categoryID));
+                }
+                return data;
+            }
+           
+            function sorting(data) {
+                let sortingType = $("#sort").val();
+                if (sortingType == 'ascName') {
+                    return data.sort((a, b) => a.name > b.name ? 1 : -1);
+                }
+                else if (sortingType == 'descName') {
+                    return data.sort((a, b) => a.name < b.name ? 1 : -1);
+                }
+                else if (sortingType == 'ascPrice') {
+                    return data.sort((a, b) => a.price.new > b.price.new ? 1 : -1);
+                }
+                else if (sortingType == 'descPrice') {
+                    return data.sort((a, b) => a.price.new < b.price.new ? 1 : -1);
+                }
+                else if (sortingType == 'ascRates') {
+                    return data.sort((a, b) => a.stars > b.stars ? 1 : -1);
+                }
+                else if (sortingType == 'descRates') {
+                    return data.sort((a, b) => a.stars < b.stars ? 1 : -1);
+                }
+            }
+            function search(data) {
+                let searchValue = $("#search").val().toLowerCase();
+                if (searchValue) {
+                    return data.filter(function (el) {
+                        return el.name.toLowerCase().indexOf(searchValue) !== -1;
+                    })
+                }
+                return data;
+            }
+            //function addToCart
+            function addToCart() {
+                var id = $(this).data('id');
+                var productsLS = anyInCart();
+                if (!productsLS) {
+                    let productsLS = [];
+                    productsLS[0] = { //adding the first one
+                        id: id,
+                        quantity: 1
+                    };
+                    setItemToLS("products", productsLS);
+                }
+                else {
+                    if (!findInLocalStorage(productsLS, id)) {
+                        addToLocalStorage(id) //adding the different one
+                        //console.log("tu")
+                    }
+                    else {
+                        updateQuantity(id); //if product alrady exist in cart, updating quantity
+                    }
+                }
+            }
+            //finding product in local storage
+            function findInLocalStorage(prod, id) {
+                return prod.find(p => p.id == id);
+            }
+            //adding product in cart
+            function addToLocalStorage(id) {
+                let productsLS = anyInCart();
+                productsLS.push({
+                    id: id,
+                    quantity: 1
+                });
+                setItemToLS("products", productsLS);
+            }
+            //if product already exist in cart, update quantity
+            function updateQuantity(id) {
+                let productsLS = anyInCart();
+                productsLS.forEach(el => {
+                    if (el.id == id)
+                        el.quantity++;
+                });
+                setItemToLS("products", productsLS);
+            }
         
-    `;
-    tags.push(e);
-    });
-    console.log(tags);
-    html+=`</div>`;
-    $('#tags').html(html);
-}
+        if (url == "http://localhost/WP2_SHOP/cart.html") {
+            
+            function displayCart() {
+                        let html = `
+            <div id="orderTable">
+            <table class="table table-responsive">
+            <thead>
+            <tr>
+            <td>Product Name</td>
+            <td>Image</td>
+            <td>Price</td>
+            <td>Quantity</td>
+            <td>Sum</td>
+            </tr>
+            </thead>`;
+                    let productsLS = getItemFromLS("products");
+                var products = getItemFromLS("allProducts");
+                console.log(productsLS);
+                console.log(products);
+                products = products.filter(el => {
+                    for (let p of productsLS) {
+                        if (el.id == p.id) {
+                            el.quantity = p.quantity;
+                            return true;
+                        }
+                    }
+                });
+                products.forEach(el => {
+                    html += `<tbody>
+                <tr>
+                <td><p>${el.name}</h5></p>
+                <td>
+                <img src="assets/img/${el.image.src}" alt="${el.image.alt}" class="img-thumbnail"
+                width="100"/>
+                </td>
+                <td class="price">$${el.price.new}</td>
+                <td class="quantity">
+                <input class="formcontrol quantityInput" type="number" value="${el.quantity}">
+                </td>
+                <td class="productSum">${parseFloat(el.price.new * el.quantity)} $</td>
+                </tr>
+                </tbody>`;
+                                });
+                                html += `<table>
+                </div>
+                <div class="container">
+                <div class="row d-flex justify-content-end" id="controls">
+                <p id="totalSum" class="m-2">Total Sum:${sum(products)}$</p>
+                <button id="purchase" class="btn btn-primary m2">Purchase</button>
+                <button id="removeAll" class="btn btn-danger m-2">Remove All</button>
+                </div>
+                </div>`;
+                $("#cart").html(html);
+                $("#purchase").click(validateCart);
+                $("#removeAll").click(removeAll);
+            }
+            //calculating total price of one product in cart
+            function sum(data) {
+                let sum = 0;
+                data.forEach(el => {
+                    sum += parseFloat(el.price.new * el.quantity);
+                });
+                return sum;
+            }
+            check(getItemFromLS("products"));
+            //function for checking if there is any products in cart
+            function check(productsInCart) {
+                if (productsInCart) {
+                    if (productsInCart.length) {
+                        displayCart();
+                        $(".quantityInput").change(quantityChange);
+                    }
+                    else
+                        showEmptyCart();
+                }
+                else
+                    showEmptyCart();
+            }
+            function showEmptyCart() {
+                $("#cart").html("<p class='text-center p-5 alert-danger'>There's no products in cart</p>");
+            }
+            function removeAll() {
+                removeItemFromLS("products");
+                location.reload();
+            }
+            function update() {
+                var productSum = document.querySelectorAll(".productSum");
+                var price = document.querySelectorAll(".price");
+                var quantitySum = document.querySelectorAll(".quantityInput");
+                var totalSumforAll = document.querySelector("#totalSum");
+                var totalSumForOne = 0;
+                for (let i = 0; i < price.length; i++) {
+                    var priceone = price[i].innerHTML.replace('$', '');
+                    productSum[i].innerHTML = (Number(priceone) * Number(quantitySum[i].value)).toFixed(2) +
+                        "$";
+                    totalSumForOne += Number(priceone) * Number(quantitySum[i].value);
+                }
+                totalSumforAll.innerHTML = "Total Sum:" + parseFloat(totalSumForOne).toFixed(2) + "$";
+            }
+            function quantityChange() {
+                if (this.value > 0) {
+                    update();
+                }
+                else {
+                    this.value = 1;
+                }
+            }
+            $("#ordername").blur(function () {
+                validateInput(reName, "#ordername", "#errOrderName", messName);
+            });
+            $("#address").blur(function () {
+                validateInput(reAddress, "#address", "#errAddress", messAddress);
+            });
+            $("#credit-card").blur(function () {
+                validateInput(reCreditCard, "#credit-card", "#errCreditCard", messCreditCard);
+            });
+            function validateCart() {
+                var errors1 = 0;
+                if (!validateInput(reName, "#ordername", "#errOrderName", messName)) {
+                    errors1++;
+                }
+                if (!validateInput(reAddress, "#address", "#errAddress", messAddress)) {
+                    errors1++;
+                }
+                if (!validateInput(reCreditCard, "#credit-card", "#errCreditCard", messCreditCard)) {
+                    errors1++;
+                }
+                else {
+                    if (errors1 == 0) {
+                        console.log('upalo');
+                        return buy();
+                    }
+                }
+            }
+            function buy() {
+                localStorage.removeItem("products");
+                showEmptyCart();
+                $("#cart").html("<p class='alert-success p-5'>Your order has been placed</p>");
+            }
+        }
+        if (url == "http://localhost/WP2_SHOP/contact.html") {
+           
+            $("#name").blur(function () {
+                validateInput(reName, "#name", "#errName", messName);
+            });
+            $("#email").blur(function () {
+                validateInput(reEmail, "#email", "#errEmail", messEmail);
+            });
+            $("#subject").blur(function () {
+                validateInput(reSubject, "#subject", "#errSubject", messSubject);
+            });
+            $("#message").blur(function () {
+                validateInput(reMessage, "#message", "#errMessage", messMessage);
+            });
+            var inputName = $("#name");
+            var inputEmail = $("#email");
+            var inputSubject = $("#subject");
+            var inputMessage = $("#message");
+            $("#form-submit").click(validateForm);
+            var errors = 0;
+            function validateForm() {
+                if (!validateInput(reName, inputName, "#errName", messName)) {
+                    errors++;
+                }
+                if (!validateInput(reEmail, inputEmail, "#errEmail", messEmail)) {
+                    errors++;
+                }
+                if (!validateInput(reSubject, inputSubject, "#errSubject", messSubject)) {
+                    errors++;
+                }
+                if (!validateInput(reMessage, inputMessage, "#errMessage", messMessage)) {
+                    errors++;
+                }
+                else {
+                    errors = 0;
+                }
+                console.log(errors);
+                if (errors == 0) {
+                    $("#response").html("<p class='alert alert-success'>Your message was sent</p>")
+                }
+            }
+            $("#form-submit").click(validateForm);
+        }
 
 
-
-
-
-
-
-
+    }
 
 
 

@@ -4,89 +4,94 @@
         "name":"Men Zara Shoes",
         "isOnSale":false,
         "price":{
-            "current":54,
-            "old":66
+            "current":54
+            
         },
         "picture":{
             "src":"img/product/product-1.jpg",
             "alt":"picture"
         },
-        "stars":4, //number of stars
+        "stars":4, 
         "category":1,
         "sizes":[1,2,3,4,5],
         "tags":[1,5],
-        "brand":4
-    },
-    {
-        "id":1,
-        "name":"Men Zara Shoes",
-        "isOnSale":false,
-        "price":{
-            "current":54,
-            "old":66
-        },
-        "picture":{
-            "src":"img/product/product-1.jpg",
-            "alt":"picture"
-        },
-        "stars":4, //number of stars
-        "category":1,
-        "sizes":[1,2,3,4,5],
-        "tags":[1,5],
-        "brand":4
+        "brand":4,
+        "top":true
     },
     {
         "id":2,
-        "name":"Piqué Biker Jacket",
+        "name":"Diagonal Textured Cap",
+        "isOnSale":false,
+        "price":{
+            "current":88
+            
+        },
+        "picture":{
+            "src":"img/product/product-2.jpg",
+            "alt":"picture"
+        },
+        "stars":3,
+        "category":1,
+        "sizes":[1,2,4,5],
+        "tags":[3,1],
+        "brand":8,
+        "top":true
+    },
+    {
+        "id":3,
+        "name":"Tommy basic shoes Men Woman Unisex",
         "isOnSale":true,
         "price":{
             "current":54,
             "old":66
         },
         "picture":{
-            "src":"img/product/product-1.jpg",
+            "src":"img/product/product-3.jpg",
             "alt":"picture"
         },
-        "stars":4, //number of stars
-        "category":1,
+        "stars":5, 
+        "category":5,
         "sizes":[1,2,3,4,5],
         "tags":[1,5],
-        "brand":4
+        "brand":7,
+        "top":false
     },
     {
-        "id":1,
-        "name":"Men Zara Shoes",
+        "id":4,
+        "name":"Men Louis Vuitton Hoodie Cool Swatwear ",
         "isOnSale":false,
         "price":{
-            "current":54,
-            "old":66
+            "current":124,
+            "old":150
+        },
+        "picture":{
+            "src":"img/product/product-4.jpg",
+            "alt":"picture"
+        },
+        "stars":5,
+        "category":3,
+        "sizes":[1,2,3],
+        "tags":[1,6],
+        "brand":1,
+        "top":true
+    },
+    {
+        "id":5,
+        "name":"T-shirt basic Adidas New Collection",
+        "isOnSale":false,
+        "price":{
+            "current":98,
+            "old":125
         },
         "picture":{
             "src":"img/product/product-1.jpg",
             "alt":"picture"
         },
-        "stars":4, //number of stars
+        "stars":4, 
         "category":1,
         "sizes":[1,2,3,4,5],
         "tags":[1,5],
-        "brand":4
-    },
-    {
-        "id":1,
-        "name":"Men Zara Shoes",
-        "isOnSale":false,
-        "price":{
-            "current":54,
-            "old":66
-        },
-        "picture":{
-            "src":"img/product/product-1.jpg",
-            "alt":"picture"
-        },
-        "stars":4, //number of stars
-        "category":1,
-        "sizes":[1,2,3,4,5],
-        "tags":[1,5],
-        "brand":4
-    },
+        "brand":5,
+        "top":false
+    }
 ]
