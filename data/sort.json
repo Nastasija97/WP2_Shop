@@ -1,0 +1,28 @@
+[
+
+    {
+        "id":"ascPrice",
+        "name":"price Low to High"
+    },
+    {
+        "id":"descPrice",
+        "name":"price High to Low"
+    },
+    {
+        "id":"ascName",
+        "name":"Name A-Z"
+    },
+    {
+        "id":"descName",
+        "name":"Name Z-A"
+    },
+    {
+        "id":"ascRates",
+        "name":"Best Quality"
+    },
+    {
+        "id":"descRates",
+        "name":"Sale"
+    }
+]
+
