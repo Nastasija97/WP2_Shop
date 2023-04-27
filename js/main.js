@@ -178,7 +178,7 @@ var url = window.location.href;
 //console.log(url);
 //function for fetching data from json
 function fetchData(file, callback) {
-    fetch("data/" + file)
+    fetch("./data/" + file)
         .then(response => response.json())
         .then(data => callback(data))
         .catch(err => console.log(err));
