@@ -136,6 +136,9 @@
 
 //MY CODE 2023 NASTASIJA PEROVIC 13/20
 
+
+
+
 //back to top button
 const backToTopBtn = document.getElementById("back-to-top-btn");
 
@@ -292,18 +295,29 @@ window.onload = function () {
             fetchData("products.json", displayProducts);
             fetchData("sizes.json", displaySizes);
             fetchData("tags.json", displayTags);
-        
+
 
         }
         catch (e) {
             $(".error").html(e.message);
         }
-           $("#sort").change(filterChange);
-        // $("#search").keyup(filterChange);
+        //change actions
+        $("#sort").change(filterChange);
+        $("#search").keyup(filterChange);
+        $('add-to-cart button').click(function (event) {
+            event.preventDefault(); // prevent the default behavior of the link
+            $('.cart-modal-content').addClass('show-cart-modal');
+            setTimeout(function () {
+                $('.cart-modal-content').removeClass('show-cart-modal');
+            }, 1000); // hide the modal after 2 seconds (adjust as needed)
+        });
+
 
         function filterChange() {
             fetchData("products.json", displayProducts);
+
         }
+
     }
 
     //display functions
@@ -331,12 +345,11 @@ window.onload = function () {
                 <ul class="product__hover">
                     <li><a href="#"><img src="img/icon/heart.png" alt="add to favs"></a></li>
                     <li><a href="#"><img src="img/icon/compare.png" alt="compare"> <span>Compare</span></a></li>
-                    <li><a href="#"><img src="img/icon/search.png" alt="search"></a></li>
                 </ul>
             </div>
             <div class="product__item__text">
                 <h6>${el.name}</h6>
-                <a href="#" class="add-cart"> <button type="button" class="btn btn-info btnCart" data-id="${el.id}"
+                <a href="" class="add-to-cart"><button type="button" class="btn btn-info btnCart" data-id="${el.id}"
                 data-bs-toggle="modal" data-bs-target="#cartModal"  style="position: relative; top: -40px;">Add to cart</button></a>
                 <div class="rating">
                   ${stars(el.stars)}
@@ -359,11 +372,11 @@ window.onload = function () {
             brands.push(e);
         });
         html += "</ul>";
-        $("#brands").html(html);  
-        $(".brand").on("change", function() {
-           
+        $("#brands").html(html);
+        $(".brand").on("change", function () {
+
             setTimeout(fetchData("products.json", displayProducts), 3000);
-          });
+        });
     }
     function displaySizes(data) {
         let html = `<div class="shop__sidebar__size" id="sizes">`;
@@ -376,7 +389,7 @@ window.onload = function () {
         html += `</div>`;
         $('#sizes').html(html);
     }
-  
+
     function displayTags(data) {
         let html = ` <div class="shop__sidebar__tags">`;
         data.forEach(e => {
@@ -388,7 +401,7 @@ window.onload = function () {
             tags.push(e);
 
         });
-       // console.log(tags);
+        // console.log(tags);
         html += `</div>`;
         $('#tags').html(html);
     }
@@ -402,16 +415,16 @@ window.onload = function () {
             categories.push(el);
         });
         $("#categories").html(html);
-        $(".category").on("change", function() {
-           
+        $(".category").on("change", function () {
+
             setTimeout(fetchData("products.json", displayProducts), 3000);
-          });
+        });
     }
     function displayProducts(data) {
-          data = filterByCategory(data);
-          data = filterByBrands(data);
-         data = sorting(data);
-        //  data = search(data);
+        data = filterByCategory(data);
+        data = filterByBrands(data);
+        data = sorting(data);
+        data = search(data);
         let html = "";
         if (data.length == 0) {
             html += `<p class="alert alert-danger">There is no products for selected category</p>`;
@@ -452,7 +465,7 @@ window.onload = function () {
         $('.category:checked').each(function (el) {
             selectedCategories.push(parseInt($(this).val()));
         });
-      //  console.log(selectedCategories);
+        //  console.log(selectedCategories);
         if (selectedCategories.length != 0) {
             return data.filter(x => selectedCategories.includes(x.category));
         }
@@ -463,7 +476,7 @@ window.onload = function () {
         $('.brand:checked').each(function (el) {
             selectedBrands.push(parseInt($(this).val()));
         });
-        
+
         if (selectedBrands.length != 0) {
             return data.filter(x => selectedBrands.includes(x.brand));
         }
@@ -471,8 +484,8 @@ window.onload = function () {
     }
     function sorting(data) {
         let sortingType = $("#sort").val();
-       // console.log(sortingType);
-       console.log(data);
+        // console.log(sortingType);
+        //   console.log(data);
         if (sortingType == 'ascName') {
             return data.sort((a, b) => a.name > b.name ? 1 : -1);
         }
@@ -490,7 +503,7 @@ window.onload = function () {
         }
         else if (sortingType == 'descRates') {
             return data.sort((a, b) => a.stars > b.stars ? 1 : -1);
-        }else{return data;}
+        } else { return data; }
     }
     function search(data) {
         let searchValue = $("#search").val().toLowerCase();
@@ -504,7 +517,9 @@ window.onload = function () {
     //function addToCart
     function addToCart() {
         var id = $(this).data('id');
+        //console.log(id);
         var productsLS = anyInCart();
+
         if (!productsLS) {
             let productsLS = [];
             productsLS[0] = { //adding the first one
@@ -545,13 +560,14 @@ window.onload = function () {
         });
         setItemToLS("products", productsLS);
     }
+    console.log(url);
 
-    if (url == "http://localhost/WP2_SHOP/cart.html" || url == "https://nastasija97.github.io/WP2_Shop/cart.html") {
+    if (url == "http://127.0.0.1:5501/shopping-cart.html" || url == "https://nastasija97.github.io/WP2_Shop/cart.html") {
 
         function displayCart() {
             let html = `
-            <div id="orderTable">
-            <table class="table table-responsive">
+            <div id="orderTable"class="shopping__cart__table">
+            <table class="table">
             <thead>
             <tr>
             <td>Product Name</td>
@@ -559,12 +575,14 @@ window.onload = function () {
             <td>Price</td>
             <td>Quantity</td>
             <td>Sum</td>
+            <td></td>
+          
             </tr>
             </thead>`;
             let productsLS = getItemFromLS("products");
             var products = getItemFromLS("allProducts");
-            console.log(productsLS);
-            console.log(products);
+            // console.log(productsLS);
+            // console.log(products);
             products = products.filter(el => {
                 for (let p of productsLS) {
                     if (el.id == p.id) {
@@ -573,19 +591,29 @@ window.onload = function () {
                     }
                 }
             });
+           // console.log(productsLS);
+          
             products.forEach(el => {
+               
                 html += `<tbody>
                 <tr>
-                <td><p>${el.name}</h5></p>
-                <td>
-                <img src="assets/img/${el.image.src}" alt="${el.image.alt}" class="img-thumbnail"
+                <td class="product__cart__item__text"><p>${el.name}</h5></p>
+                <td class="">
+                <img src="${el.picture.src}" alt="${el.picture.alt}" class="img-thumbnail"
                 width="100"/>
                 </td>
-                <td class="price">$${el.price.new}</td>
-                <td class="quantity">
-                <input class="formcontrol quantityInput" type="number" value="${el.quantity}">
+                <td class="price product__cart__item__text">$${el.price.current}</td>
+                <td class="quantity quantity__item">
+                <div class="quantity">
+                <div class="pro-qty-2">
+                <input class="quantityInput" type="number" value="${el.quantity}">
+
+                </div>
+            </div>
                 </td>
-                <td class="productSum">${parseFloat(el.price.new * el.quantity)} $</td>
+                <td class="productSum cart__price">${parseFloat(el.price.current * el.quantity)} $</td>
+                <td class="cart__close remove-product"><i class="fa fa-close"></i></td>
+
                 </tr>
                 </tbody>`;
             });
@@ -594,23 +622,64 @@ window.onload = function () {
                 <div class="container">
                 <div class="row d-flex justify-content-end" id="controls">
                 <p id="totalSum" class="m-2">Total Sum:${sum(products)}$</p>
-                <button id="purchase" class="btn btn-primary m2">Purchase</button>
-                <button id="removeAll" class="btn btn-danger m-2">Remove All</button>
+                <button id="purchase" class="continue__btn m2">Proceed to checkout</button>
+                <button id="removeAll" class="btn  m2">Remove All</button>
                 </div>
                 </div>`;
             $("#cart").html(html);
-            $("#purchase").click(validateCart);
-            $("#removeAll").click(removeAll);
+           $("#removeAll").click(removeAll);
+           $(".remove-product").on("click", function () {
+            // Get the index of the product to be removed
+            const indexToRemove = $(this).closest("tr").index() - 1;
+          
+            // Remove the product from the productsLS array
+            const productsLS = getItemFromLS("products") || [];
+            if (productsLS[indexToRemove]) {
+              productsLS.splice(indexToRemove, 1);
+              setItemToLS("products", productsLS);
+            }
+          
+            // Remove the product from the table
+            $(this).closest("tr").remove();
+          
+            // Recalculate the total sum
+            $("#totalSum").text("Total Sum: " + sum(productsLS) + "$");
+          });
+          $(".quantityInput").on("change", function () {
+            
+            const indexToChange = $(this).closest("tr").index() - 1;
+            const productsLS = getItemFromLS("products") || [];
+            if (productsLS[indexToChange]) {
+              productsLS[indexToChange].quantity = $(this).val();
+              setItemToLS("products", productsLS);
+          
+              // Update the product sum
+              const productSum = $(this).closest("tr").find(".productSum");
+              const newSum = parseFloat(productsLS[indexToChange].price.current * productsLS[indexToChange].quantity);
+              productSum.text(newSum + " $");
+            }
+            $("#totalSum").text("Total Sum: " + sum(productsLS) + "$");
+          });
+           
+            $("#purchase").on("click", function() {
+                window.location.href = "/checkout.html";
+              });
+
         }
-        //calculating total price of one product in cart
-        function sum(data) {
+       
+  
+        check(getItemFromLS("products"));
+
+         //calculating total price of one product in cart
+         function sum(data) {
             let sum = 0;
             data.forEach(el => {
-                sum += parseFloat(el.price.new * el.quantity);
+              if (el && el.price && el.price.current && el.quantity) {
+                sum += parseFloat(el.price.current * el.quantity);
+              }
             });
             return sum;
-        }
-        check(getItemFromLS("products"));
+          }
         //function for checking if there is any products in cart
         function check(productsInCart) {
             if (productsInCart) {
@@ -631,19 +700,19 @@ window.onload = function () {
             removeItemFromLS("products");
             location.reload();
         }
+
         function update() {
-            var productSum = document.querySelectorAll(".productSum");
-            var price = document.querySelectorAll(".price");
-            var quantitySum = document.querySelectorAll(".quantityInput");
-            var totalSumforAll = document.querySelector("#totalSum");
+            var productSum = $(".productSum");
+            var price = $(".price");
+            var totalSumforAll = $("#totalSum");
             var totalSumForOne = 0;
-            for (let i = 0; i < price.length; i++) {
-                var priceone = price[i].innerHTML.replace('$', '');
-                productSum[i].innerHTML = (Number(priceone) * Number(quantitySum[i].value)).toFixed(2) +
-                    "$";
-                totalSumForOne += Number(priceone) * Number(quantitySum[i].value);
-            }
-            totalSumforAll.innerHTML = "Total Sum:" + parseFloat(totalSumForOne).toFixed(2) + "$";
+            productSum.each(function (i, el) {
+                var priceone = parseFloat(price.eq(i).text().replace('$', ''));
+                var quantitySum = parseInt($(this).closest('tr').find('.quantityInput').val());
+                $(el).text((priceone * quantitySum).toFixed(2) + "$");
+                totalSumForOne += priceone * quantitySum;
+            });
+            totalSumforAll.text("Total Sum: " + totalSumForOne.toFixed(2) + "$");
         }
         function quantityChange() {
             if (this.value > 0) {
@@ -653,6 +722,10 @@ window.onload = function () {
                 this.value = 1;
             }
         }
+    
+    }
+    if (url == "http://127.0.0.1:5501/checkout.html" || url == "https://nastasija97.github.io/WP2_Shop/checkout.html") {
+
         $("#ordername").blur(function () {
             validateInput(reName, "#ordername", "#errOrderName", messName);
         });
@@ -662,6 +735,12 @@ window.onload = function () {
         $("#credit-card").blur(function () {
             validateInput(reCreditCard, "#credit-card", "#errCreditCard", messCreditCard);
         });
+
+        function buy() {
+            localStorage.removeItem("products");
+            showEmptyCart();
+            $("#cart").html("<p class='alert-success p-5'>Your order has been placed</p>");
+        }
         function validateCart() {
             var errors1 = 0;
             if (!validateInput(reName, "#ordername", "#errOrderName", messName)) {
@@ -675,17 +754,13 @@ window.onload = function () {
             }
             else {
                 if (errors1 == 0) {
-                    console.log('upalo');
+                   
                     return buy();
                 }
             }
         }
-        function buy() {
-            localStorage.removeItem("products");
-            showEmptyCart();
-            $("#cart").html("<p class='alert-success p-5'>Your order has been placed</p>");
-        }
     }
+
     if (url == "http://localhost/WP2_SHOP/contact.html" || url == "https://nastasija97.github.io/WP2_Shop/contact.html") {
 
         $("#name").blur(function () {
