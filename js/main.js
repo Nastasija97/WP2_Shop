@@ -251,7 +251,20 @@ window.onload = function () {
 
         fetchData("nav.json", displayNav);
         fetchData("products.json", getAllProducts);
-
+            //cart icon displaying num of different products in cart
+            const productsLS = getItemFromLS("products") || [];
+           // console.log(productsLS);
+           
+            $(".number-of-products span").html(`</strong>${productsLS.length}</strong>`);
+            $('a.add-to-cart button.btnCart').click(function (event) {
+                event.preventDefault(); // prevent the default behavior of the link
+                $('.cart-modal-content').addClass('show-cart-modal');
+                setTimeout(function () {
+                    $('.cart-modal-content').removeClass('show-cart-modal');
+                }, 1000); // hide the modal after 2 seconds (adjust as needed)
+                //update number of prods
+                $(".number-of-products span").html(`</strong>${productsLS.length}</strong>`);
+            });
 
     }
     catch (e) {
@@ -304,13 +317,9 @@ window.onload = function () {
         //change actions
         $("#sort").change(filterChange);
         $("#search").keyup(filterChange);
-        $('add-to-cart button').click(function (event) {
-            event.preventDefault(); // prevent the default behavior of the link
-            $('.cart-modal-content').addClass('show-cart-modal');
-            setTimeout(function () {
-                $('.cart-modal-content').removeClass('show-cart-modal');
-            }, 1000); // hide the modal after 2 seconds (adjust as needed)
-        });
+       
+    
+   
 
 
         function filterChange() {
@@ -349,7 +358,7 @@ window.onload = function () {
             </div>
             <div class="product__item__text">
                 <h6>${el.name}</h6>
-                <a href="" class="add-to-cart"><button type="button" class="btn btn-info btnCart" data-id="${el.id}"
+                <a class="add-to-cart"><button type="button" class="btn btn-secondary btnCart" data-id="${el.id}"
                 data-bs-toggle="modal" data-bs-target="#cartModal"  style="position: relative; top: -40px;">Add to cart</button></a>
                 <div class="rating">
                   ${stars(el.stars)}
@@ -627,6 +636,7 @@ window.onload = function () {
                 </div>
                 </div>`;
             $("#cart").html(html);
+           
            $("#removeAll").click(removeAll);
            $(".remove-product").on("click", function () {
             // Get the index of the product to be removed
