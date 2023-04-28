@@ -217,33 +217,8 @@ function anyInCart() {
     return getItemFromLS("products");
 }
 //function for validating single input
-function validateInput(regEx, element, err, errMess) {
-    if (!$(element).val().match(regEx)) {
-        $(element).addClass("error");
-        $(err).html(errMess);
-        return false;
-    }
-    else {
-        $(element).removeClass("error");
-        $(element).addClass("ok");
-        $(err).html("");
-        return true;
-    }
-}
-//regex
-var reName = /^[A-ZČĆŠĐŽ][a-zčćšđž]{2,19}(\s[A-ZČĆŠĐŽ][a-zčćšđž]{2,19})*$/;
-var reEmail = /^[\w\.\-]+\@([a-z0-9]+\.)+[a-z]{2,3}$/;
-var reSubject = /^([1-zćčžđšA-ZČĆŠĐŽ0-1@.\s]{2,20})$/;
-var reAddress = /^([A-ZČĆŠĐŽ]|[1-9]{1,5})[A-ZČĆŠĐŽa-zčćšđž\d\-\.\s]+$/;
-var reMessage = /^([1-zćčžđšA-ZČĆŠĐŽ0-1@.\s]{2,255})$/;
-var reAddress = /^([A-ZČĆŠĐŽ]|[1-9]{1,5})[A-ZČĆŠĐŽa-zčćšđž\d\-\.\s]+$/;
-var reCreditCard = /^[0-9]{16}$/;
-var messName = "Name must begin with capital letter";
-var messEmail = "Email must contain @ sign";
-var messSubject = "Subject can contain 20 characters";
-var messMessage = "Message can contain 255 characters";
-var messAddress = "Please eneter your address";
-var messCreditCard = "Credit card contains 16 digits";
+
+
 
 
 window.onload = function () {
@@ -251,20 +226,23 @@ window.onload = function () {
 
         fetchData("nav.json", displayNav);
         fetchData("products.json", getAllProducts);
-            //cart icon displaying num of different products in cart
-            const productsLS = getItemFromLS("products") || [];
-           // console.log(productsLS);
-           
+        //cart icon displaying num of different products in cart
+        const productsLS = getItemFromLS("products") || [];
+        // console.log(productsLS);
+
+        $(".number-of-products span").html(`</strong>${productsLS.length}</strong>`);
+        $('.add-to-cart').on("cick", function (event) {
+
+            // event.preventDefault(); // prevent the default behavior of the link
+            $('.cart-modal-content').addClass('show-cart-modal');
+            setTimeout(function () {
+                $('.cart-modal-content').removeClass('show-cart-modal');
+            }, 1000); // hide the modal after 2 seconds (adjust as needed)
+            //update number of prods
+            console.log('uslo');
             $(".number-of-products span").html(`</strong>${productsLS.length}</strong>`);
-            $('a.add-to-cart button.btnCart').click(function (event) {
-                event.preventDefault(); // prevent the default behavior of the link
-                $('.cart-modal-content').addClass('show-cart-modal');
-                setTimeout(function () {
-                    $('.cart-modal-content').removeClass('show-cart-modal');
-                }, 1000); // hide the modal after 2 seconds (adjust as needed)
-                //update number of prods
-                $(".number-of-products span").html(`</strong>${productsLS.length}</strong>`);
-            });
+        });
+
 
     }
     catch (e) {
@@ -317,9 +295,9 @@ window.onload = function () {
         //change actions
         $("#sort").change(filterChange);
         $("#search").keyup(filterChange);
-       
-    
-   
+
+
+
 
 
         function filterChange() {
@@ -334,7 +312,7 @@ window.onload = function () {
     function displayNav(data) {
         let h = "<ul>";
         data.forEach(element => {
-            h += `<li><a href="${element.path}" onclick="activeLink(this)" >${element.name}</a></li>
+            h += `<li><a href="${element.path}" >${element.name}</a></li>
                     `;
 
             nav.push(element);
@@ -445,6 +423,8 @@ window.onload = function () {
         }
         $("#products").html(html);
         $(".btnCart").on("click", addToCart);
+
+
     }
     //logic functions
     function isSale(data) {
@@ -600,102 +580,73 @@ window.onload = function () {
                     }
                 }
             });
-           // console.log(productsLS);
-          
+            // console.log(productsLS);
+
             products.forEach(el => {
-               
+
                 html += `<tbody>
-                <tr>
-                <td class="product__cart__item__text"><p>${el.name}</h5></p>
-                <td class="">
-                <img src="${el.picture.src}" alt="${el.picture.alt}" class="img-thumbnail"
-                width="100"/>
-                </td>
-                <td class="price product__cart__item__text">$${el.price.current}</td>
-                <td class="quantity quantity__item">
-                <div class="quantity">
-                <div class="pro-qty-2">
-                <input class="quantityInput" type="number" value="${el.quantity}">
-
-                </div>
-            </div>
-                </td>
-                <td class="productSum cart__price">${parseFloat(el.price.current * el.quantity)} $</td>
-                <td class="cart__close remove-product"><i class="fa fa-close"></i></td>
-
+                <tr data-product-id="${el.id}">
+                  <td class="product__cart__item__text"><p>${el.name}</p></td>
+                  <td class="">
+                    <img src="${el.picture.src}" alt="${el.picture.alt}" class="img-thumbnail" width="100"/>
+                  </td>
+                  <td class="price product__cart__item__text">$${el.price.current}</td>
+                  <td class="quantity quantity__item">
+                    <div class="quantity">
+                      <div class="pro-qty-2">
+                        <input id="quantityInput${el.id}" class="quantityInput" type="number" value="${el.quantity}">
+                      </div>
+                    </div>
+                  </td>
+                  <td id="productSum${el.id}" class="productSum cart__price">${productPrice(el)}$ </td>
+                  <td class="cart__close remove-product"><i class="fa fa-close"></i></td>
                 </tr>
-                </tbody>`;
+              </tbody>`;
             });
             html += `<table>
                 </div>
                 <div class="container">
                 <div class="row d-flex justify-content-end" id="controls">
-                <p id="totalSum" class="m-2">Total Sum:${sum(products)}$</p>
-                <button id="purchase" class="continue__btn m2">Proceed to checkout</button>
-                <button id="removeAll" class="btn  m2">Remove All</button>
+                <p id="totalSum" class="m-2">Total Sum:${sum(products)}</p>
+                <button id="removeAll" class="btn btn-danger  m2">Remove All</button>
                 </div>
                 </div>`;
             $("#cart").html(html);
-           
-           $("#removeAll").click(removeAll);
-           $(".remove-product").on("click", function () {
-            // Get the index of the product to be removed
-            const indexToRemove = $(this).closest("tr").index() - 1;
-          
-            // Remove the product from the productsLS array
-            const productsLS = getItemFromLS("products") || [];
-            if (productsLS[indexToRemove]) {
-              productsLS.splice(indexToRemove, 1);
-              setItemToLS("products", productsLS);
-            }
-          
-            // Remove the product from the table
-            $(this).closest("tr").remove();
-          
-            // Recalculate the total sum
-            $("#totalSum").text("Total Sum: " + sum(productsLS) + "$");
-          });
-          $(".quantityInput").on("change", function () {
+            $(".quantityInput").change(quantityChange);
+            $("#removeAll").click(removeAll);
+            $(".remove-product").click(removeSingleProdInCart);
+         
             
-            const indexToChange = $(this).closest("tr").index() - 1;
-            const productsLS = getItemFromLS("products") || [];
-            if (productsLS[indexToChange]) {
-              productsLS[indexToChange].quantity = $(this).val();
-              setItemToLS("products", productsLS);
-          
-              // Update the product sum
-              const productSum = $(this).closest("tr").find(".productSum");
-              const newSum = parseFloat(productsLS[indexToChange].price.current * productsLS[indexToChange].quantity);
-              productSum.text(newSum + " $");
-            }
-            $("#totalSum").text("Total Sum: " + sum(productsLS) + "$");
-          });
-           
-            $("#purchase").on("click", function() {
-                window.location.href = "/checkout.html";
-              });
+            $(".cart__total ul li:nth-child(1) span").html( sum(products));
+            $(".cart__total ul li:nth-child(2) span").html(sum(products));
+
 
         }
-       
-  
-        check(getItemFromLS("products"));
 
-         //calculating total price of one product in cart
-         function sum(data) {
-            let sum = 0;
-            data.forEach(el => {
-              if (el && el.price && el.price.current && el.quantity) {
-                sum += parseFloat(el.price.current * el.quantity);
-              }
-            });
-            return sum;
+
+        check(getItemFromLS("products"));
+        
+       
+        function productPrice(product) {
+            return parseFloat(product.price.current) * parseFloat(product.quantity);
           }
+        //calculating total price of one product in cart
+        function sum(products) {
+            let total = 0;
+            products.forEach((product) => {
+              total += parseFloat(product.price.current) * parseFloat(product.quantity);
+            });
+            return total.toFixed(2) + " $";
+          }
+       
+       
         //function for checking if there is any products in cart
         function check(productsInCart) {
             if (productsInCart) {
                 if (productsInCart.length) {
                     displayCart();
-                    $(".quantityInput").change(quantityChange);
+
+
                 }
                 else
                     showEmptyCart();
@@ -710,66 +661,153 @@ window.onload = function () {
             removeItemFromLS("products");
             location.reload();
         }
-
-        function update() {
-            var productSum = $(".productSum");
-            var price = $(".price");
+        function removeSingleProdInCart() {
+            // Get the id of the product to be removed
+            const productId = $(this).closest("tr").attr("data-product-id");
+          
+            // Remove the product from the productsLS array
+            const productsLS = getItemFromLS("products") || [];
+            const updatedProductsLS = productsLS.filter((product) => product.id !== productId);
+            setItemToLS("products", updatedProductsLS);
+          
+            // Remove the product from the table
+            $(this).closest("tr").remove();
+          
+            // Recalculate the total sum
+            const totalSum = sum(updatedProductsLS);
+            $("#totalSum").text("Total Sum: " + totalSum);
+          
+            // If there are no more products, show the "empty cart" message
+            if (updatedProductsLS.length === 0) {
+              $("#orderTable").html("<p>Your cart is currently empty.</p>");
+            }
+            setItemToLS("products", updatedProductsLS);
+        }
+        
+          function update() {
             var totalSumforAll = $("#totalSum");
             var totalSumForOne = 0;
-            productSum.each(function (i, el) {
-                var priceone = parseFloat(price.eq(i).text().replace('$', ''));
-                var quantitySum = parseInt($(this).closest('tr').find('.quantityInput').val());
-                $(el).text((priceone * quantitySum).toFixed(2) + "$");
-                totalSumForOne += priceone * quantitySum;
+          
+            $(".productSum").each(function (i, el) {
+              var $el = $(el);
+              var $row = $el.closest('tr');
+              var priceone = parseFloat($row.find('.price').text().replace('$', ''));
+              var quantitySum = parseInt($row.find('.quantityInput').val());
+              var productId = $row.attr('data-product-id');
+          
+              $el.text((priceone * quantitySum).toFixed(2) + "$");
+              totalSumForOne += priceone * quantitySum;
+          
+              // Update total sum for the current product
+              $('#totalSum' + productId).text("Total Sum: " + (priceone * quantitySum).toFixed(2) + "$");
+          
+              // Save the updated quantity value to local storage
+              localStorage.setItem('quantity_' + productId, quantitySum);
             });
+          
             totalSumforAll.text("Total Sum: " + totalSumForOne.toFixed(2) + "$");
-        }
+          }
+          
         function quantityChange() {
             if (this.value > 0) {
                 update();
+               
             }
             else {
                 this.value = 1;
             }
         }
-    
+        
+        
+
     }
     if (url == "http://127.0.0.1:5501/checkout.html" || url == "https://nastasija97.github.io/WP2_Shop/checkout.html") {
 
-        $("#ordername").blur(function () {
-            validateInput(reName, "#ordername", "#errOrderName", messName);
-        });
-        $("#address").blur(function () {
-            validateInput(reAddress, "#address", "#errAddress", messAddress);
-        });
-        $("#credit-card").blur(function () {
-            validateInput(reCreditCard, "#credit-card", "#errCreditCard", messCreditCard);
-        });
-
-        function buy() {
-            localStorage.removeItem("products");
-            showEmptyCart();
-            $("#cart").html("<p class='alert-success p-5'>Your order has been placed</p>");
-        }
-        function validateCart() {
-            var errors1 = 0;
-            if (!validateInput(reName, "#ordername", "#errOrderName", messName)) {
-                errors1++;
-            }
-            if (!validateInput(reAddress, "#address", "#errAddress", messAddress)) {
-                errors1++;
-            }
-            if (!validateInput(reCreditCard, "#credit-card", "#errCreditCard", messCreditCard)) {
-                errors1++;
-            }
-            else {
-                if (errors1 == 0) {
-                   
-                    return buy();
-                }
-            }
-        }
+    // regex
+    var reName = /^[A-ZČĆŠĐŽ][a-zčćšđž]{2,19}(\s[A-ZČĆŠĐŽ][a-zčćšđž]{2,19})*$/;
+    var reEmail = /^[\w\.\-]+\@([a-z0-9]+\.)+[a-z]{2,3}$/;
+    var reSubject = /^([1-zćčžđšA-ZČĆŠĐŽ0-1@.\s]{2,20})$/;
+    var reAddress = /^([A-ZČĆŠĐŽ]|[1-9]{1,5})[A-ZČĆŠĐŽa-zčćšđž\d\-\.\s]+$/;
+    var reMessage = /^([1-zćčžđšA-ZČĆŠĐŽ0-1@.\s]{2,255})$/;
+    var reCreditCard = /^[0-9]{16}$/;
+  
+    var messName = "Name must begin with a capital letter";
+    var messEmail = "Email must contain an @ sign";
+    var messSubject = "Subject can contain 20 characters";
+    var messMessage = "Message can contain 255 characters";
+    var messAddress = "Please enter your address";
+    var messCreditCard = "Credit card contains 16 digits";
+  
+    // add event listeners to validate input fields
+    $("#ordername").on("input", function() {
+      validateInput(reName, "#ordername", "#errOrderName", messName);
+    });
+    $("#email").on("input", function() {
+      validateInput(reEmail, "#email", "#errEmail", messEmail);
+    });
+    $("#address").on("input", function() {
+      validateInput(reAddress, "#address", "#errAddress", messAddress);
+    });
+    $("#credit-card").on("input", function() {
+      validateInput(reCreditCard, "#credit-card", "#errCreditCard", messCreditCard);
+    });
+  
+  
+  
+    function validateInput(regEx, element, err, errMess) {
+      if (!$(element).val().match(regEx)) {
+        $(element).addClass("error");
+        $(err).html(errMess); // added this line to display the error message
+        return false;
+      } else {
+        $(element).removeClass("error");
+        $(element).addClass("ok");
+        $(err).html(""); // added this line to clear the error message when input is valid
+        return true;
+      }
     }
+    function validateCart() {
+        var errors1 = 0;
+        if (!validateInput(reName, "#ordername", "#errOrderName", messName)) {
+            errors1++;
+        }
+        if (!validateInput(reAddress, "#address", "#errAddress", messAddress)) {
+            errors1++;
+        }
+        if (!validateInput(reCreditCard, "#credit-card", "#errCreditCard", messCreditCard)) {
+            errors1++;
+        }
+        if (errors1 == 0) {
+          return buy();
+        }
+      }
+      
+      function buy() {
+        localStorage.removeItem("products");
+        showEmptyCart();
+        $("#cart").html("<p class='alert-success p-5'>Your order has been placed</p>");
+      }
+      
+    
+      
+      
+      $("#ordername").blur(function () {
+        validateInput(reName, "#ordername", "#errOrderName", messName);
+      });
+      
+      $("#address").blur(function () {
+        validateInput(reAddress, "#address", "#errAddress", messAddress);
+      });
+      
+      $("#credit-card").blur(function () {
+        validateInput(reCreditCard, "#credit-card", "#errCreditCard", messCreditCard);
+      });
+      
+      $("#submit").click(function() {
+        validateCart();
+      });
+    }
+
 
     if (url == "http://localhost/WP2_SHOP/contact.html" || url == "https://nastasija97.github.io/WP2_Shop/contact.html") {
 
