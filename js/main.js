@@ -551,7 +551,7 @@ window.onload = function () {
     }
     console.log(url);
 
-    if (url == "http://127.0.0.1:5501/shopping-cart.html" || url == "https://nastasija97.github.io/WP2_Shop/cart.html") {
+    if (url == "http://127.0.0.1:5501/shopping-cart.html" || url == "https://nastasija97.github.io/WP2_Shop/shopping-cart.html") {
 
         function displayCart() {
             let html = `
