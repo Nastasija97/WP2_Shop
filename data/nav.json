@@ -12,8 +12,12 @@
     "path":"./about.html"
 },
 {
-    "name":"Shopping cart",
+    "name":"Cart",
     "path":"./shopping-cart.html"
+},
+{
+    "name":"Contact",
+    "path":"./contact.html"
 }
 
 ]
