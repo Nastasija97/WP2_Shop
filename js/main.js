@@ -218,33 +218,33 @@ function anyInCart() {
 }
 //function for validating single input
 
-  
+
 function validateInput(regEx, element, err, errMess) {
     if (!$(element).val().match(regEx)) {
-      $(element).addClass("error");
-      $(err).html(errMess); // added this line to display the error message
-      return false;
+        $(element).addClass("error");
+        $(err).html(errMess); // added this line to display the error message
+        return false;
     } else {
-      $(element).removeClass("error");
-      $(element).addClass("ok");
-      $(err).html(""); // added this line to clear the error message when input is valid
-      return true;
+        $(element).removeClass("error");
+        $(element).addClass("ok");
+        $(err).html(""); // added this line to clear the error message when input is valid
+        return true;
     }
-  }
- // regex
- var reName = /^[A-ZČĆŠĐŽ][a-zčćšđž]{2,19}(\s[A-ZČĆŠĐŽ][a-zčćšđž]{2,19})*$/;
- var reEmail = /^[\w\.\-]+\@([a-z0-9]+\.)+[a-z]{2,3}$/;
- var reSubject = /^([1-zćčžđšA-ZČĆŠĐŽ0-1@.\s]{2,20})$/;
- var reAddress = /^([A-ZČĆŠĐŽ]|[1-9]{1,5})[A-ZČĆŠĐŽa-zčćšđž\d\-\.\s]+$/;
- var reMessage = /^([1-zćčžđšA-ZČĆŠĐŽ0-1@.\s]{2,255})$/;
- var reCreditCard = /^[0-9]{16}$/;
+}
+// regex
+var reName = /^[A-ZČĆŠĐŽ][a-zčćšđž]{2,19}(\s[A-ZČĆŠĐŽ][a-zčćšđž]{2,19})*$/;
+var reEmail = /^[\w\.\-]+\@([a-z0-9]+\.)+[a-z]{2,3}$/;
+var reSubject = /^([1-zćčžđšA-ZČĆŠĐŽ0-1@.\s]{2,20})$/;
+var reAddress = /^([A-ZČĆŠĐŽ]|[1-9]{1,5})[A-ZČĆŠĐŽa-zčćšđž\d\-\.\s]+$/;
+var reMessage = /^([1-zćčžđšA-ZČĆŠĐŽ0-1@.\s]{2,255})$/;
+var reCreditCard = /^[0-9]{16}$/;
 
- var messName = "Name must begin with a capital letter";
- var messEmail = "Email must contain an @ sign";
- var messSubject = "Subject can contain 20 characters";
- var messMessage = "Message can contain 255 characters";
- var messAddress = "Please enter your address";
- var messCreditCard = "Credit card contains 16 digits";
+var messName = "Name must begin with a capital letter";
+var messEmail = "Email must contain an @ sign";
+var messSubject = "Subject can contain 20 characters";
+var messMessage = "Message can contain 255 characters";
+var messAddress = "Please enter your address";
+var messCreditCard = "Credit card contains 16 digits";
 
 
 
@@ -642,9 +642,9 @@ window.onload = function () {
             $(".quantityInput").change(quantityChange);
             $("#removeAll").click(removeAll);
             $(".remove-product").click(removeSingleProdInCart);
-         
-            
-            $(".cart__total ul li:nth-child(1) span").html( sum(products));
+
+
+            $(".cart__total ul li:nth-child(1) span").html(sum(products));
             $(".cart__total ul li:nth-child(2) span").html(sum(products));
 
 
@@ -652,21 +652,21 @@ window.onload = function () {
 
 
         check(getItemFromLS("products"));
-        
-       
+
+
         function productPrice(product) {
             return parseFloat(product.price.current) * parseFloat(product.quantity);
-          }
+        }
         //calculating total price of one product in cart
         function sum(products) {
             let total = 0;
             products.forEach((product) => {
-              total += parseFloat(product.price.current) * parseFloat(product.quantity);
+                total += parseFloat(product.price.current) * parseFloat(product.quantity);
             });
             return total.toFixed(2) + " $";
-          }
-       
-       
+        }
+
+
         //function for checking if there is any products in cart
         function check(productsInCart) {
             if (productsInCart) {
@@ -691,199 +691,199 @@ window.onload = function () {
         function removeSingleProdInCart() {
             // Get the id of the product to be removed
             const productId = $(this).closest("tr").attr("data-product-id");
-          
+
             // Remove the product from the productsLS array
             const productsLS = getItemFromLS("products") || [];
             const updatedProductsLS = productsLS.filter((product) => product.id !== productId);
             setItemToLS("products", updatedProductsLS);
-          
+
             // Remove the product from the table
             $(this).closest("tr").remove();
-          
+
             // Recalculate the total sum
             const totalSum = sum(updatedProductsLS);
             $("#totalSum").text("Total Sum: " + totalSum);
-          
+
             // If there are no more products, show the "empty cart" message
             if (updatedProductsLS.length === 0) {
-              $("#orderTable").html("<p>Your cart is currently empty.</p>");
+                $("#orderTable").html("<p>Your cart is currently empty.</p>");
             }
             setItemToLS("products", updatedProductsLS);
         }
-        
-          function update() {
+
+        function update() {
             var totalSumforAll = $("#totalSum");
             var totalSumForOne = 0;
-          
+
             $(".productSum").each(function (i, el) {
-              var $el = $(el);
-              var $row = $el.closest('tr');
-              var priceone = parseFloat($row.find('.price').text().replace('$', ''));
-              var quantitySum = parseInt($row.find('.quantityInput').val());
-              var productId = $row.attr('data-product-id');
-          
-              $el.text((priceone * quantitySum).toFixed(2) + "$");
-              totalSumForOne += priceone * quantitySum;
-          
-              // Update total sum for the current product
-              $('#totalSum' + productId).text("Total Sum: " + (priceone * quantitySum).toFixed(2) + "$");
-          
-              // Save the updated quantity value to local storage
-              localStorage.setItem('quantity_' + productId, quantitySum);
+                var $el = $(el);
+                var $row = $el.closest('tr');
+                var priceone = parseFloat($row.find('.price').text().replace('$', ''));
+                var quantitySum = parseInt($row.find('.quantityInput').val());
+                var productId = $row.attr('data-product-id');
+
+                $el.text((priceone * quantitySum).toFixed(2) + "$");
+                totalSumForOne += priceone * quantitySum;
+
+                // Update total sum for the current product
+                $('#totalSum' + productId).text("Total Sum: " + (priceone * quantitySum).toFixed(2) + "$");
+
+                // Save the updated quantity value to local storage
+                localStorage.setItem('quantity_' + productId, quantitySum);
             });
-          
+
             totalSumforAll.text("Total Sum: " + totalSumForOne.toFixed(2) + "$");
-          }
-          
+        }
+
         function quantityChange() {
             if (this.value > 0) {
                 update();
-               
+
             }
             else {
                 this.value = 1;
             }
         }
-        
-        
+
+
 
     }
     if (url == "http://127.0.0.1:5501/checkout.html" || url == "https://nastasija97.github.io/WP2_Shop/checkout.html") {
 
-   
-    // add event listeners to validate input fields
-    $("#ordername").on("input", function() {
-      validateInput(reName, "#ordername", "#errOrderName", messName);
-    });
-    $("#email").on("input", function() {
-      validateInput(reEmail, "#email", "#errEmail", messEmail);
-    });
-    $("#address").on("input", function() {
-      validateInput(reAddress, "#address", "#errAddress", messAddress);
-    });
-    $("#credit-card").on("input", function() {
-      validateInput(reCreditCard, "#credit-card", "#errCreditCard", messCreditCard);
-    });
-  
-  
-    function validateCart() {
-        var errors1 = 0;
-        if (!validateInput(reName, "#ordername", "#errOrderName", messName)) {
-            errors1++;
+
+        // add event listeners to validate input fields
+        $("#ordername").on("input", function () {
+            validateInput(reName, "#ordername", "#errOrderName", messName);
+        });
+        $("#email").on("input", function () {
+            validateInput(reEmail, "#email", "#errEmail", messEmail);
+        });
+        $("#address").on("input", function () {
+            validateInput(reAddress, "#address", "#errAddress", messAddress);
+        });
+        $("#credit-card").on("input", function () {
+            validateInput(reCreditCard, "#credit-card", "#errCreditCard", messCreditCard);
+        });
+
+
+        function validateCart() {
+            var errors1 = 0;
+            if (!validateInput(reName, "#ordername", "#errOrderName", messName)) {
+                errors1++;
+            }
+            if (!validateInput(reAddress, "#address", "#errAddress", messAddress)) {
+                errors1++;
+            }
+            if (!validateInput(reCreditCard, "#credit-card", "#errCreditCard", messCreditCard)) {
+                errors1++;
+            }
+            console.log(errors1);
+            console.log(errors);
+            if (errors1 == 0) {
+                return buy();
+            }
         }
-        if (!validateInput(reAddress, "#address", "#errAddress", messAddress)) {
-            errors1++;
+
+        function buy() {
+            localStorage.removeItem("products");
+            showEmptyCart();
+            $(".checkout__form").html("<p class='alert-success p-5'>Your order has been placed</p>");
         }
-        if (!validateInput(reCreditCard, "#credit-card", "#errCreditCard", messCreditCard)) {
-            errors1++;
-        }
-        console.log(errors1);
-        console.log(errors);
-        if (errors1 == 0) {
-          return buy();
-        }
-      }
-      
-      function buy() {
-        localStorage.removeItem("products");
-        showEmptyCart();
-        $(".checkout__form").html("<p class='alert-success p-5'>Your order has been placed</p>");
-      }
-     
-    
-      
-      
-      $("#ordername").blur(function () {
-        validateInput(reName, "#ordername", "#errOrderName", messName);
-      });
-      
-      $("#address").blur(function () {
-        validateInput(reAddress, "#address", "#errAddress", messAddress);
-      });
-      
-      $("#credit-card").blur(function () {
-        validateInput(reCreditCard, "#credit-card", "#errCreditCard", messCreditCard);
-      });
-      
-      $("#submit").click(function() {
-        validateCart();
-      });
+
+
+
+
+        $("#ordername").blur(function () {
+            validateInput(reName, "#ordername", "#errOrderName", messName);
+        });
+
+        $("#address").blur(function () {
+            validateInput(reAddress, "#address", "#errAddress", messAddress);
+        });
+
+        $("#credit-card").blur(function () {
+            validateInput(reCreditCard, "#credit-card", "#errCreditCard", messCreditCard);
+        });
+
+        $("#submit").click(function () {
+            validateCart();
+        });
     }
 
 
     if (url == "http://127.0.0.1:5501/contact.html" || url == "https://nastasija97.github.io/WP2_Shop/contact.html") {
-console.log("on");
-    // Retrieve saved form data on page load
-    var savedData = localStorage.getItem("form-data");
-    if (savedData) {
-        savedData = JSON.parse(savedData);
-        $("#name").val(savedData.name);
-        $("#email").val(savedData.email);
-        $("#subject").val(savedData.subject);
-        $("#message").val(savedData.message);
-    }
+        console.log("on");
+        // Retrieve saved form data on page load
+        var savedData = localStorage.getItem("form-data");
+        if (savedData) {
+            savedData = JSON.parse(savedData);
+            $("#name").val(savedData.name);
+            $("#email").val(savedData.email);
+            $("#subject").val(savedData.subject);
+            $("#message").val(savedData.message);
+        }
 
-    $("#name").blur(function () {
-        validateInput(reName, "#name", "#errName", messName);
-    });
-    $("#email").blur(function () {
-        validateInput(reEmail, "#email", "#errEmail", messEmail);
-    });
-    $("#subject").blur(function () {
-        validateInput(reSubject, "#subject", "#errSubject", messSubject);
-    });
-    $("#message").blur(function () {
-        validateInput(reMessage, "#message", "#errMessage", messMessage);
-    });
-    var inputName = $("#name");
-    var inputEmail = $("#email");
-    var inputSubject = $("#subject");
-    var inputMessage = $("#message");
-    $("#form-submit").click(validateForm);
-    var errors = 0;
-    function validateForm() {
-        if (!validateInput(reName, inputName, "#errName", messName)) {
-            errors++;
-            $("#errName").addClass("alert alert-danger");
-        } else {
-            $("#errName").removeClass("alert alert-danger");
+        $("#name").blur(function () {
+            validateInput(reName, "#name", "#errName", messName);
+        });
+        $("#email").blur(function () {
+            validateInput(reEmail, "#email", "#errEmail", messEmail);
+        });
+        $("#subject").blur(function () {
+            validateInput(reSubject, "#subject", "#errSubject", messSubject);
+        });
+        $("#message").blur(function () {
+            validateInput(reMessage, "#message", "#errMessage", messMessage);
+        });
+        var inputName = $("#name");
+        var inputEmail = $("#email");
+        var inputSubject = $("#subject");
+        var inputMessage = $("#message");
+        $("#form-submit").click(validateForm);
+        var errors = 0;
+        function validateForm() {
+            if (!validateInput(reName, inputName, "#errName", messName)) {
+                errors++;
+                $("#errName").addClass("alert alert-danger");
+            } else {
+                $("#errName").removeClass("alert alert-danger");
+            }
+            if (!validateInput(reEmail, inputEmail, "#errEmail", messEmail)) {
+                errors++;
+                $("#errEmail").addClass("alert alert-danger");
+            } else {
+                $("#errEmail").removeClass("alert alert-danger");
+            }
+            if (!validateInput(reSubject, inputSubject, "#errSubject", messSubject)) {
+                errors++;
+                $("#errSubject").addClass("alert alert-danger");
+            } else {
+                $("#errSubject").removeClass("alert alert-danger");
+            }
+            if (!validateInput(reMessage, inputMessage, "#errMessage", messMessage)) {
+                errors++;
+                $("#errMessage").addClass("alert alert-danger");
+            } else {
+                $("#errMessage").removeClass("alert alert-danger");
+            }
+            console.log(errors);
+            if (errors == 0) {
+                $("#response").html("<p class='alert alert-success'>Your message was sent</p>");
+                // Clear saved form data
+                localStorage.removeItem("form-data");
+            } else {
+                // Save form data if errors occurred
+                var formData = {
+                    name: $("#name").val(),
+                    email: $("#email").val(),
+                    subject: $("#subject").val(),
+                    message: $("#message").val()
+                };
+                localStorage.setItem("form-data", JSON.stringify(formData));
+            }
         }
-        if (!validateInput(reEmail, inputEmail, "#errEmail", messEmail)) {
-            errors++;
-            $("#errEmail").addClass("alert alert-danger");
-        } else {
-            $("#errEmail").removeClass("alert alert-danger");
-        }
-        if (!validateInput(reSubject, inputSubject, "#errSubject", messSubject)) {
-            errors++;
-            $("#errSubject").addClass("alert alert-danger");
-        } else {
-            $("#errSubject").removeClass("alert alert-danger");
-        }
-        if (!validateInput(reMessage, inputMessage, "#errMessage", messMessage)) {
-            errors++;
-            $("#errMessage").addClass("alert alert-danger");
-        } else {
-            $("#errMessage").removeClass("alert alert-danger");
-        }
-        console.log(errors);
-        if (errors == 0) {
-            $("#response").html("<p class='alert alert-success'>Your message was sent</p>");
-            // Clear saved form data
-            localStorage.removeItem("form-data");
-        } else {
-            // Save form data if errors occurred
-            var formData = {
-                name: $("#name").val(),
-                email: $("#email").val(),
-                subject: $("#subject").val(),
-                message: $("#message").val()
-            };
-            localStorage.setItem("form-data", JSON.stringify(formData));
-        }
+        $("#form-submit").click(validateForm);
     }
-    $("#form-submit").click(validateForm);
-}
 
 
 }
