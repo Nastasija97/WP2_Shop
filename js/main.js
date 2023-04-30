@@ -350,7 +350,7 @@ window.onload = function () {
 
     }
     function displaySingleProduct(el) {
-        let html = "";
+        let html;
         return html = ` <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix hot-sales">
         <div class="product__item sale">
             <div class="product__item__pic set-bg" data-setbg="${el.picture.src}"
@@ -396,19 +396,23 @@ window.onload = function () {
         let html = `<div class="shop__sidebar__size" id="sizes">`;
         data.forEach(e => {
             html += `<label for="${e.name}">${e.name}
-                    <input type="radio" id="${e.name}">
+                    <input type="radio" id="${e.name}" class="size">
                 </label>`;
             sizes.push(e);
         });
         html += `</div>`;
         $('#sizes').html(html);
+        $(".size").on("change", function () {
+
+            setTimeout(fetchData("products.json", displayProducts), 3000);
+        });
     }
 
     function displayTags(data) {
         let html = ` <div class="shop__sidebar__tags">`;
         data.forEach(e => {
             html += ` 
-                    <a href="#">${e.name}</a>
+                    <a class='tag'>${e.name}</a>
                   
                     
                 `;
@@ -418,6 +422,10 @@ window.onload = function () {
         // console.log(tags);
         html += `</div>`;
         $('#tags').html(html);
+        $(".tag").on("click", function () {
+
+            setTimeout(fetchData("products.json", displayProducts), 3000);
+        });
     }
     function displayCategories(data) {
         let html = `<ul class="nice-scroll">`;
@@ -437,6 +445,8 @@ window.onload = function () {
     function displayProducts(data) {
         data = filterByCategory(data);
         data = filterByBrands(data);
+        data = filterBySize(data);
+        data = filterByTag(data);
         data = sorting(data);
         data = search(data);
         let html = "";
@@ -498,6 +508,42 @@ window.onload = function () {
         }
         return data;
     }
+    function filterBySize(data) {
+        let selectedSizes = [];
+        $('.size:checked').each(function (el) {
+            selectedSizes.push(parseInt($(this).val()));
+        });
+
+        if (selectedSizes.length !== 0) {
+            return data.filter(product => {
+                for (const size of selectedSizes) {
+                    if (!product.sizes.includes(size)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        }
+        return data;
+    }
+    function filterByTag(data) {
+        let selectedTags = [];
+        $('.tag:checked').each(function (el) {
+            selectedTags.push($(this).val());
+        });
+
+        if (selectedTags.length !== 0) {
+            return data.filter(product => {
+                for (const tag of selectedTags) {
+                    if (!product.tags.includes(tag)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        }
+        return data;
+    }
     function sorting(data) {
         let sortingType = $("#sort").val();
         // console.log(sortingType);
@@ -508,10 +554,10 @@ window.onload = function () {
         else if (sortingType == 'descName') {
             return data.sort((a, b) => a.name < b.name ? 1 : -1);
         }
-        else if (sortingType == 'ascPrice') {
+        else if (sortingType == 'descPrice') {
             return data.sort((a, b) => a.price.current > b.price.current ? -1 : 1);
         }
-        else if (sortingType == 'descPrice') {
+        else if (sortingType == 'ascPrice') {
             return data.sort((a, b) => a.price.current > b.price.current ? 1 : -1);
         }
         else if (sortingType == 'ascRates') {
@@ -626,7 +672,7 @@ window.onload = function () {
                     </div>
                   </td>
                   <td id="productSum${el.id}" class="productSum cart__price">${productPrice(el)}$ </td>
-                  <td class="cart__close remove-product"><i class="fa fa-close"></i></td>
+                  <td  class="cart__close remove-product"><i class="fa fa-close"></i></td>
                 </tr>
               </tbody>`;
             });
@@ -648,6 +694,11 @@ window.onload = function () {
             $(".cart__total ul li:nth-child(2) span").html(sum(products));
 
 
+
+
+
+
+
         }
 
 
@@ -661,7 +712,9 @@ window.onload = function () {
         function sum(products) {
             let total = 0;
             products.forEach((product) => {
-                total += parseFloat(product.price.current) * parseFloat(product.quantity);
+                if (product.price) {
+                    total += parseFloat(product.price.current) * parseFloat(product.quantity);
+                }
             });
             return total.toFixed(2) + " $";
         }
@@ -672,6 +725,7 @@ window.onload = function () {
             if (productsInCart) {
                 if (productsInCart.length) {
                     displayCart();
+
 
 
                 }
@@ -690,26 +744,29 @@ window.onload = function () {
         }
         function removeSingleProdInCart() {
             // Get the id of the product to be removed
-            const productId = $(this).closest("tr").attr("data-product-id");
-
+            const productId = $(this).attr("data-product-id");
+          
             // Remove the product from the productsLS array
             const productsLS = getItemFromLS("products") || [];
             const updatedProductsLS = productsLS.filter((product) => product.id !== productId);
             setItemToLS("products", updatedProductsLS);
-
+          
             // Remove the product from the table
             $(this).closest("tr").remove();
-
-            // Recalculate the total sum
-            const totalSum = sum(updatedProductsLS);
-            $("#totalSum").text("Total Sum: " + totalSum);
-
+          
             // If there are no more products, show the "empty cart" message
             if (updatedProductsLS.length === 0) {
-                $("#orderTable").html("<p>Your cart is currently empty.</p>");
+              $("#orderTable").html("<p>Your cart is currently empty.</p>");
             }
-            setItemToLS("products", updatedProductsLS);
-        }
+          
+            // Recalculate the total sum
+            const totalSum = sum(updatedProductsLS);
+            $("#totalSum").html("Total Sum: " + totalSum);
+          
+            // Update the individual product's total sum
+            update();
+          
+          }
 
         function update() {
             var totalSumforAll = $("#totalSum");
@@ -722,17 +779,20 @@ window.onload = function () {
                 var quantitySum = parseInt($row.find('.quantityInput').val());
                 var productId = $row.attr('data-product-id');
 
-                $el.text((priceone * quantitySum).toFixed(2) + "$");
+                $el.text((priceone * quantitySum) + "$");
                 totalSumForOne += priceone * quantitySum;
 
                 // Update total sum for the current product
-                $('#totalSum' + productId).text("Total Sum: " + (priceone * quantitySum).toFixed(2) + "$");
+                $('#totalSum' + productId).text("Total Sum: " + (priceone * quantitySum) + "$");
 
                 // Save the updated quantity value to local storage
                 localStorage.setItem('quantity_' + productId, quantitySum);
             });
 
-            totalSumforAll.text("Total Sum: " + totalSumForOne.toFixed(2) + "$");
+            totalSumforAll.text("Total Sum: " + totalSumForOne + "$");
+            $(".cart__total ul li:nth-child(1) span").html(totalSumForOne+"$");
+            $(".cart__total ul li:nth-child(2) span").html(totalSumForOne+"$");
+
         }
 
         function quantityChange() {
