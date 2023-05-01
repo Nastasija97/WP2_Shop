@@ -3843,3 +3843,15 @@ ol {
 .show-cart-modal {
 	display: block !important;
   }
+
+/* contact.html  */
+
+.error-message {
+	color: red;
+	margin-top: 5px;
+	display: none;
+  }
+  
+  .error-field {
+	border-color: red !important;
+  }

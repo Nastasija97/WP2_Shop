@@ -891,122 +891,110 @@ window.onload = function () {
 
     if (url == "http://127.0.0.1:5501/contact.html" || url == "https://nastasija97.github.io/WP2_Shop/contact.html") {
 
-        // Retrieve saved form data on page load
-        $("input, textarea").on("change", function () {
-            var formData = {
-                name: $("#name").val(),
-                email: $("#email").val(),
-                subject: $("#subject").val(),
-                message: $("#message").val()
-            };
-            localStorage.setItem("form-data", JSON.stringify(formData));
-        });
+       // Retrieve saved form data on page load
+  $("input, textarea").on("change", function () {
+    var formData = {
+      name: $("#name").val(),
+      email: $("#email").val(),
+      subject: $("#subject").val(),
+      message: $("#message").val()
+    };
+    localStorage.setItem("form-data", JSON.stringify(formData));
+  });
 
-        // load saved form data on page load
-        var savedData = localStorage.getItem("form-data");
-        if (savedData) {
-            savedData = JSON.parse(savedData);
-            $("#name").val(savedData.name);
-            $("#email").val(savedData.email);
-            $("#subject").val(savedData.subject);
-            $("#message").val(savedData.message);
-        }
+  // Load saved form data on page load
+  var savedData = localStorage.getItem("form-data");
+  if (savedData) {
+    savedData = JSON.parse(savedData);
+    $("#name").val(savedData.name);
+    $("#email").val(savedData.email);
+    $("#subject").val(savedData.subject);
+    $("#message").val(savedData.message);
+  }
 
-        function displayErrorMessage(inputField, errorMessage) {
-            var errorDiv = inputField.parent().find(".error-message");
-            if (errorDiv.length === 0) {
-                inputField.after("<div class='error-message'></div>");
-                errorDiv = inputField.parent().find(".error-message");
-            }
-            errorDiv.html(errorMessage);
-            errorDiv.show();
-            inputField.addClass("error-field");
-        }
-
-        function hideErrorMessage(inputField) {
-            var errorDiv = inputField.parent().find(".error-message");
-            if (errorDiv.length !== 0) {
-                errorDiv.hide();
-            }
-            inputField.removeClass("error-field");
-        }
-
-        function validateInput(regex, inputField, errorMessage) {
-            var inputValue = inputField.val().trim();
-            if (!regex.test(inputValue)) {
-                displayErrorMessage(inputField, errorMessage);
-                return false;
-            } else {
-                hideErrorMessage(inputField);
-                return true;
-            }
-        }
-
-        var reName = /^[a-zA-Z ]{2,30}$/;
-        var reEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-        var reSubject = /^[a-zA-Z0-9 ]{2,100}$/;
-        var reMessage = /^[a-zA-Z0-9.,?!'"()\n\r ]{10,1000}$/;
-
-        $("#name").blur(function () {
-            validateInput(reName, $(this), "Please enter a valid name (2-30 characters)");
-        });
-        $("#email").blur(function () {
-            validateInput(reEmail, $(this), "Please enter a valid email address");
-        });
-        $("#subject").blur(function () {
-            validateInput(reSubject, $(this), "Please enter a valid subject (2-100 characters)");
-        });
-        $("#message").blur(function () {
-            validateInput(reMessage, $(this), "Please enter a valid message (10-1000 characters)");
-        });
-
-        function validateForm() {
-            errors = 0;
-            if (!validateInput(reName, inputName, "#errName", messName)) {
-                errors++;
-                $("#errName").addClass("alert alert-danger");
-            } else {
-                $("#errName").removeClass("alert alert-danger");
-            }
-            if (!validateInput(reEmail, inputEmail, "#errEmail", messEmail)) {
-                errors++;
-                $("#errEmail").addClass("alert alert-danger");
-            } else {
-                $("#errEmail").removeClass("alert alert-danger");
-            }
-            if (!validateInput(reSubject, inputSubject, "#errSubject", messSubject)) {
-                errors++;
-                $("#errSubject").addClass("alert alert-danger");
-            } else {
-                $("#errSubject").removeClass("alert alert-danger");
-            }
-            if (!validateInput(reMessage, inputMessage, "#errMessage", messMessage)) {
-                errors++;
-                $("#errMessage").addClass("alert alert-danger");
-            } else {
-                $("#errMessage").removeClass("alert alert-danger");
-            }
-            if (errors == 0) {
-                // show success message
-                $("#myModal").modal();
-                // Clear saved form data
-                localStorage.removeItem("form-data");
-            } else {
-                // Save form data if errors occurred
-                var formData = {
-                    name: $("#name").val(),
-                    email: $("#email").val(),
-                    subject: $("#subject").val(),
-                    message: $("#message").val()
-                };
-                localStorage.setItem("form-data", JSON.stringify(formData));
-            }
-        }
-
-
-        $("#form-submit").click(validateForm);
+  function displayErrorMessage(inputField, errorMessage) {
+    var errorDiv = inputField.parent().find(".error-message");
+    if (errorDiv.length === 0) {
+      inputField.after("<div class='error-message'></div>");
+      errorDiv = inputField.parent().find(".error-message");
     }
+    errorDiv.html(errorMessage);
+    errorDiv.show();
+    inputField.addClass("error-field");
+  }
 
+  function hideErrorMessage(inputField) {
+    var errorDiv = inputField.parent().find(".error-message");
+    if (errorDiv.length !== 0) {
+      errorDiv.hide();
+    }
+    inputField.removeClass("error-field");
+  }
+
+  function validateInput(regex, inputField, errorMessage) {
+    var inputValue = inputField.val().trim();
+    if (!regex.test(inputValue)) {
+      displayErrorMessage(inputField, errorMessage);
+      return false;
+    } else {
+      hideErrorMessage(inputField);
+      return true;
+    }
+  }
+
+  var reName = /^[a-zA-Z ]{2,30}$/;
+  var reEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  var reSubject = /^[a-zA-Z0-9 ]{2,100}$/;
+  var reMessage = /^[a-zA-Z0-9.,?!'"()\n\r ]{10,1000}$/;
+
+  $("#name").blur(function () {
+    validateInput(reName, $(this), "Please enter a valid name (2-30 characters)");
+  });
+  $("#email").blur(function () {
+    validateInput(reEmail, $(this), "Please enter a valid email address");
+  });
+  $("#subject").blur(function () {
+    validateInput(reSubject, $(this), "Please enter a valid subject (2-100 characters)");
+  });
+  $("#message").blur(function () {
+    validateInput(reMessage, $(this), "Please enter a valid message (10-1000 characters)");
+  });
+
+  function validateForm() {
+    var errors = 0;
+    if (!validateInput(reName, $("#name"), "Please enter a valid name (2-30 characters)")) {
+      errors++;
+    }
+    if (!validateInput(reEmail, $("#email"), "Please enter a valid email address")) {
+      errors++;
+    }
+    if (!validateInput(reSubject, $("#subject"), "Please enter a valid subject (2-100 characters)")) {
+      errors++;
+    }
+    if (!validateInput(reMessage, $("#message"), "Please enter a valid message (10-1000 characters)")) {
+      errors++;
+    }
+  
+    // Save form data if errors occurred
+    var formData = {
+      name: $("#name").val(),
+      email: $("#email").val(),
+      subject: $("#subject").val(),
+      message: $("#message").val()
+    };
+    localStorage.setItem("form-data", JSON.stringify(formData));
+  
+    if (errors == 0) { // if there are no errors
+      $('#contact-form')[0].reset(); // reset the form inputs
+      $('#myModal').modal('show'); // show the modal
+    }
+  }
+  
+  $("#contact-form").submit(function(event) {
+    event.preventDefault();
+    validateForm();
+  });
+    }
 
 }
 
