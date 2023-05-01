@@ -135,16 +135,18 @@
 
 
 //MY CODE 2023 NASTASIJA PEROVIC 13/20
+if (document.getElementById("back-to-top-btn")) {
+    const backToTopBtn = document.getElementById("back-to-top-btn");
 
+    backToTopBtn.addEventListener("click", function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+}
 
 
 
 //back to top button
-const backToTopBtn = document.getElementById("back-to-top-btn");
-
-backToTopBtn.addEventListener("click", function () {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-});
 
 
 //active link function 
@@ -269,12 +271,14 @@ window.onload = function () {
             console.log('uslo');
             $(".number-of-products span").html(`</strong>${productsLS.length}</strong>`);
         });
+        $(".price").html(getItemFromLS('finalPrice'));
 
 
     }
     catch (e) {
         $(".error").html(e.message());
     }
+
 
     //console.log(allProducts);
     //console.log(url);
@@ -576,17 +580,22 @@ window.onload = function () {
         }
         return data;
     }
+
+
     //function addToCart
     function addToCart() {
         var id = $(this).data('id');
+
         //console.log(id);
         var productsLS = anyInCart();
 
         if (!productsLS) {
+
             let productsLS = [];
             productsLS[0] = { //adding the first one
                 id: id,
-                quantity: 1
+                quantity: 1,
+
             };
             setItemToLS("products", productsLS);
         }
@@ -607,9 +616,12 @@ window.onload = function () {
     //adding product in cart
     function addToLocalStorage(id) {
         let productsLS = anyInCart();
+
         productsLS.push({
             id: id,
-            quantity: 1
+            quantity: 1,
+
+
         });
         setItemToLS("products", productsLS);
     }
@@ -642,6 +654,7 @@ window.onload = function () {
             </tr>
             </thead>`;
             let productsLS = getItemFromLS("products");
+            console.log(productsLS);
             var products = getItemFromLS("allProducts");
             // console.log(productsLS);
             // console.log(products);
@@ -649,6 +662,7 @@ window.onload = function () {
                 for (let p of productsLS) {
                     if (el.id == p.id) {
                         el.quantity = p.quantity;
+
                         return true;
                     }
                 }
@@ -680,7 +694,7 @@ window.onload = function () {
                 </div>
                 <div class="container">
                 <div class="row d-flex justify-content-end" id="controls">
-                <p id="totalSum" class="m-2">Total Sum:${sum(products)}</p>
+                <p id="totalSum" class="m-2">${sum(products)}</p>
                 <button id="removeAll" class="btn btn-danger  m2">Remove All</button>
                 </div>
                 </div>`;
@@ -690,13 +704,14 @@ window.onload = function () {
             $(".remove-product").click(removeSingleProdInCart);
 
 
-            $(".cart__total ul li:nth-child(1) span").html(sum(products));
+            $(".cart__total ul li:nth-child(1) span").html($('#totalSum'));
             $(".cart__total ul li:nth-child(2) span").html(sum(products));
 
 
 
 
 
+            setItemToLS("finalPrice", sum(products));
 
 
         }
@@ -745,28 +760,28 @@ window.onload = function () {
         function removeSingleProdInCart() {
             // Get the id of the product to be removed
             const productId = $(this).attr("data-product-id");
-          
+
             // Remove the product from the productsLS array
             const productsLS = getItemFromLS("products") || [];
             const updatedProductsLS = productsLS.filter((product) => product.id !== productId);
             setItemToLS("products", updatedProductsLS);
-          
+
             // Remove the product from the table
             $(this).closest("tr").remove();
-          
+
             // If there are no more products, show the "empty cart" message
             if (updatedProductsLS.length === 0) {
-              $("#orderTable").html("<p>Your cart is currently empty.</p>");
+                $("#orderTable").html("<p>Your cart is currently empty.</p>");
             }
-          
+
             // Recalculate the total sum
             const totalSum = sum(updatedProductsLS);
             $("#totalSum").html("Total Sum: " + totalSum);
-          
+            setItemToLS("totalPrice", totalSum);
             // Update the individual product's total sum
             update();
-          
-          }
+
+        }
 
         function update() {
             var totalSumforAll = $("#totalSum");
@@ -774,6 +789,7 @@ window.onload = function () {
 
             $(".productSum").each(function (i, el) {
                 var $el = $(el);
+
                 var $row = $el.closest('tr');
                 var priceone = parseFloat($row.find('.price').text().replace('$', ''));
                 var quantitySum = parseInt($row.find('.quantityInput').val());
@@ -786,12 +802,14 @@ window.onload = function () {
                 $('#totalSum' + productId).text("Total Sum: " + (priceone * quantitySum) + "$");
 
                 // Save the updated quantity value to local storage
-                localStorage.setItem('quantity_' + productId, quantitySum);
+
             });
+            //change quantity input;
+
 
             totalSumforAll.text("Total Sum: " + totalSumForOne + "$");
-            $(".cart__total ul li:nth-child(1) span").html(totalSumForOne+"$");
-            $(".cart__total ul li:nth-child(2) span").html(totalSumForOne+"$");
+            $(".cart__total ul li:nth-child(1) span").html(totalSumForOne + "$");
+            $(".cart__total ul li:nth-child(2) span").html(totalSumForOne + "$");
 
         }
 
@@ -872,8 +890,19 @@ window.onload = function () {
 
 
     if (url == "http://127.0.0.1:5501/contact.html" || url == "https://nastasija97.github.io/WP2_Shop/contact.html") {
-        console.log("on");
+
         // Retrieve saved form data on page load
+        $("input, textarea").on("change", function () {
+            var formData = {
+                name: $("#name").val(),
+                email: $("#email").val(),
+                subject: $("#subject").val(),
+                message: $("#message").val()
+            };
+            localStorage.setItem("form-data", JSON.stringify(formData));
+        });
+
+        // load saved form data on page load
         var savedData = localStorage.getItem("form-data");
         if (savedData) {
             savedData = JSON.parse(savedData);
@@ -883,25 +912,56 @@ window.onload = function () {
             $("#message").val(savedData.message);
         }
 
+        function displayErrorMessage(inputField, errorMessage) {
+            var errorDiv = inputField.parent().find(".error-message");
+            if (errorDiv.length === 0) {
+                inputField.after("<div class='error-message'></div>");
+                errorDiv = inputField.parent().find(".error-message");
+            }
+            errorDiv.html(errorMessage);
+            errorDiv.show();
+            inputField.addClass("error-field");
+        }
+
+        function hideErrorMessage(inputField) {
+            var errorDiv = inputField.parent().find(".error-message");
+            if (errorDiv.length !== 0) {
+                errorDiv.hide();
+            }
+            inputField.removeClass("error-field");
+        }
+
+        function validateInput(regex, inputField, errorMessage) {
+            var inputValue = inputField.val().trim();
+            if (!regex.test(inputValue)) {
+                displayErrorMessage(inputField, errorMessage);
+                return false;
+            } else {
+                hideErrorMessage(inputField);
+                return true;
+            }
+        }
+
+        var reName = /^[a-zA-Z ]{2,30}$/;
+        var reEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+        var reSubject = /^[a-zA-Z0-9 ]{2,100}$/;
+        var reMessage = /^[a-zA-Z0-9.,?!'"()\n\r ]{10,1000}$/;
+
         $("#name").blur(function () {
-            validateInput(reName, "#name", "#errName", messName);
+            validateInput(reName, $(this), "Please enter a valid name (2-30 characters)");
         });
         $("#email").blur(function () {
-            validateInput(reEmail, "#email", "#errEmail", messEmail);
+            validateInput(reEmail, $(this), "Please enter a valid email address");
         });
         $("#subject").blur(function () {
-            validateInput(reSubject, "#subject", "#errSubject", messSubject);
+            validateInput(reSubject, $(this), "Please enter a valid subject (2-100 characters)");
         });
         $("#message").blur(function () {
-            validateInput(reMessage, "#message", "#errMessage", messMessage);
+            validateInput(reMessage, $(this), "Please enter a valid message (10-1000 characters)");
         });
-        var inputName = $("#name");
-        var inputEmail = $("#email");
-        var inputSubject = $("#subject");
-        var inputMessage = $("#message");
-        $("#form-submit").click(validateForm);
-        var errors = 0;
+
         function validateForm() {
+            errors = 0;
             if (!validateInput(reName, inputName, "#errName", messName)) {
                 errors++;
                 $("#errName").addClass("alert alert-danger");
@@ -926,9 +986,9 @@ window.onload = function () {
             } else {
                 $("#errMessage").removeClass("alert alert-danger");
             }
-            console.log(errors);
             if (errors == 0) {
-                $("#response").html("<p class='alert alert-success'>Your message was sent</p>");
+                // show success message
+                $("#myModal").modal();
                 // Clear saved form data
                 localStorage.removeItem("form-data");
             } else {
@@ -942,6 +1002,8 @@ window.onload = function () {
                 localStorage.setItem("form-data", JSON.stringify(formData));
             }
         }
+
+
         $("#form-submit").click(validateForm);
     }
 
